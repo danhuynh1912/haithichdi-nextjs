@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { MoveRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HotTours from './components/hotTours/hot-tours';
+import { ANIMATION_EASE } from '@/lib/constants';
 
 export default function Home() {
   return (
@@ -27,7 +28,7 @@ export default function Home() {
               animate={{ opacity: 1, transform: 'translateY(0px)' }}
               transition={{
                 delay: 0.3,
-                ease: [0.261, 0.169, 0, 1.025],
+                ease: ANIMATION_EASE,
                 duration: 1,
               }}
             >
@@ -38,7 +39,7 @@ export default function Home() {
               animate={{ opacity: 1, transform: 'translateY(0px)' }}
               transition={{
                 delay: 0.4,
-                ease: [0.261, 0.169, 0, 1.025],
+                ease: ANIMATION_EASE,
                 duration: 1,
               }}
               className='leading-[clamp(2rem,5vw,75px)] text-[clamp(2rem,5vw,72px)] font-black mt-4'
@@ -50,7 +51,7 @@ export default function Home() {
               animate={{ opacity: 1, transform: 'translateY(0px)' }}
               transition={{
                 delay: 0.5,
-                ease: [0.261, 0.169, 0, 1.025],
+                ease: ANIMATION_EASE,
                 duration: 1,
               }}
               className='text-[20px] mt-6'
@@ -67,7 +68,7 @@ export default function Home() {
               transition={{
                 delay: 0.6,
                 duration: 1,
-                ease: [0.261, 0.169, 0, 1.025],
+                ease: ANIMATION_EASE,
               }}
             >
               <Button

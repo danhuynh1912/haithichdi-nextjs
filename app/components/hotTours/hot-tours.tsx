@@ -7,6 +7,7 @@ import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 import HotTour, { HotTourData, MotionHotTour } from './hot-tour';
+import { ANIMATION_EASE } from '@/lib/constants';
 
 const list = {
   hidden: {
@@ -55,7 +56,7 @@ const HotTours = ({ className }: { className: string }) => {
             key={tour.id}
             tour={tour}
             transition={{
-              ease: [0.261, 0.169, 0, 1.025],
+              ease: ANIMATION_EASE,
               duration: 1.2,
               delay: index * 0.1,
             }}
