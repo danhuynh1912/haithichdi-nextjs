@@ -29,6 +29,9 @@ export default function RootLayout({
         <div className='text-white absolute flex items-center justify-between h-fit p-8 pb-32 z-1 inset-0 bg-gradient-to-b from-black to-black/0'>
           <h1 className='text-2xl fw-600'>haithichdi</h1>
           <div className='flex gap-12'>
+            <Link href={'/'} className='cursor-pointer hover:underline'>
+              Trang chủ
+            </Link>
             <Link
               href={'/locations'}
               className='cursor-pointer hover:underline'

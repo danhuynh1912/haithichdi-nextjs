@@ -10,11 +10,13 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 interface LocationCarouselProps {
   locations: Location[];
   onActiveChange: (index: number) => void;
+  onDetailsClick: (location: Location) => void;
 }
 
 export default function LocationCarousel({
   locations,
   onActiveChange,
+  onDetailsClick,
 }: LocationCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const is2xl = useMediaQuery('(min-width: 1536px)');
@@ -54,6 +56,7 @@ export default function LocationCarousel({
               activeIndex={activeIndex}
               is2xl={is2xl}
               onClick={() => setIndex(index)}
+              onDetailsClick={onDetailsClick}
             />
           ))}
         </div>
@@ -63,7 +66,7 @@ export default function LocationCarousel({
         <div className='mt-8 flex items-center gap-8'>
           <button
             onClick={handlePrev}
-            className='w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300'
+            className='w-14 h-14 cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90'
           >
             <ChevronLeft size={24} />
           </button>
@@ -86,7 +89,7 @@ export default function LocationCarousel({
 
           <button
             onClick={handleNext}
-            className='w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300'
+            className='w-14 h-14 cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90'
           >
             <ChevronRight size={24} />
           </button>
@@ -97,7 +100,8 @@ export default function LocationCarousel({
           {locations.map((_, index) => (
             <div
               key={index}
-              className={`h-1 transition-all duration-300 rounded-full ${
+              onClick={() => setIndex(index)}
+              className={`h-1 transition-all duration-300 rounded-full cursor-pointer ${
                 index === activeIndex ? 'w-8 bg-red-600' : 'w-4 bg-white/20'
               }`}
             />

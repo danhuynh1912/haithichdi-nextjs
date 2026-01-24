@@ -5,6 +5,7 @@ import { locationService } from '@/lib/services/location';
 import { Location } from './types';
 import BackgroundBlur from './components/background-blur';
 import LocationCarousel from './components/location-carousel';
+import LocationDetailModal from './components/location-detail-modal';
 import { motion, AnimatePresence } from 'motion/react';
 import { ANIMATION_EASE } from '@/lib/constants';
 
@@ -12,6 +13,9 @@ export default function LocationsPage() {
   const [locations, setLocations] = useState<Location[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -68,8 +72,14 @@ export default function LocationsPage() {
         <LocationCarousel
           locations={locations}
           onActiveChange={(index) => setActiveIndex(index)}
+          onDetailsClick={(location) => setSelectedLocation(location)}
         />
       </div>
+
+      <LocationDetailModal
+        location={selectedLocation}
+        onClose={() => setSelectedLocation(null)}
+      />
     </main>
   );
 }
