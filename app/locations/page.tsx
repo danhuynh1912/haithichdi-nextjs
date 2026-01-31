@@ -1,13 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { locationService } from '@/lib/services/location';
 import { Location } from './types';
 import BackgroundBlur from './components/background-blur';
 import LocationCarousel from './components/location-carousel';
 import LocationDetailModal from './components/location-detail-modal';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { ANIMATION_EASE } from '@/lib/constants';
+import { slugify } from '@/lib/utils';
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -16,6 +18,10 @@ export default function LocationsPage() {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null,
   );
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const paramName = searchParams?.get('name');
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -31,6 +37,52 @@ export default function LocationsPage() {
 
     fetchLocations();
   }, []);
+
+  useEffect(() => {
+    if (!paramName && !!selectedLocation) {
+      setSelectedLocation(null);
+    }
+  }, [paramName]);
+
+  // Open modal & sync query param
+  const openLocation = (location: Location) => {
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    params.set('name', slugify(location.name));
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+    const index = locations.findIndex((item) => item.id === location.id);
+    if (index !== -1) {
+      setActiveIndex(index);
+    }
+    setSelectedLocation(location);
+  };
+
+  // Close modal & remove query param
+  const closeLocation = useCallback(() => {
+    // setSelectedLocation(null);
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    params.delete('name');
+    const query = params.toString();
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  }, [searchParams, pathname, router]);
+  
+  // Auto-open modal from query param on load/reload
+  useEffect(() => {
+    if (!locations.length) return;
+    const nameParam = searchParams?.get('name');
+    if (!nameParam) return;
+
+    const index = locations.findIndex(
+      (loc) => slugify(loc.name) === nameParam,
+    );
+
+    if (index !== -1) {
+      setActiveIndex(index);
+      if (!selectedLocation || selectedLocation.id !== locations[index].id) {
+        setSelectedLocation(locations[index]);
+      }
+    }
+  }, [locations, searchParams, selectedLocation]);
 
   if (loading) {
     return (
@@ -71,15 +123,13 @@ export default function LocationsPage() {
 
         <LocationCarousel
           locations={locations}
+          activeIndex={activeIndex}
           onActiveChange={(index) => setActiveIndex(index)}
-          onDetailsClick={(location) => setSelectedLocation(location)}
+          onDetailsClick={openLocation}
         />
       </div>
 
-      <LocationDetailModal
-        location={selectedLocation}
-        onClose={() => setSelectedLocation(null)}
-      />
+      <LocationDetailModal location={selectedLocation} onClose={closeLocation} />
     </main>
   );
 }

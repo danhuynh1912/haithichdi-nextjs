@@ -1,12 +1,10 @@
 'use client';
 
-import { motion, AnimatePresence } from 'motion/react';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 import { Location, Tour } from '../types';
 import { locationService } from '@/lib/services/location';
-import { X, Calendar, Users, MoveRight } from 'lucide-react';
-import { ANIMATION_EASE } from '@/lib/constants';
+import { X, Calendar, Users, MoveRight, FileText } from 'lucide-react';
 import { formatDateDdMm } from '@/lib/utils';
 
 interface LocationDetailModalProps {
@@ -22,179 +20,157 @@ export default function LocationDetailModal({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (location) {
-      const fetchTours = async () => {
-        setLoading(true);
-        try {
-          const data = await locationService.getToursByLocation(location.id);
-          setTours(data);
-        } catch (error) {
-          console.error('Error fetching tours:', error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchTours();
-    } else {
+    if (!location) {
       setTours([]);
+      return;
     }
+
+    const fetchTours = async () => {
+      setLoading(true);
+      try {
+        const data = await locationService.getToursByLocation(location.id);
+        setTours(data);
+      } catch (error) {
+        console.error('Error fetching tours:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTours();
   }, [location]);
 
+  const pdfUrl = useMemo(
+    () => location?.quotation_file_url || null,
+    [location?.quotation_file_url],
+  );
+
+  const pdfSrc = useMemo(() => {
+    if (!pdfUrl) return null;
+    const suffix = 'toolbar=0&navpanes=0&scrollbar=0';
+    return pdfUrl.includes('#') ? `${pdfUrl}&${suffix}` : `${pdfUrl}#${suffix}`;
+  }, [pdfUrl]);
   return (
     <AnimatePresence>
       {location && (
         <motion.div
+          key={location.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{
-            duration: 0.2,
-            ease: ANIMATION_EASE,
-          }}
-          exit={{
-            opacity: 0,
-            transition: { duration: 0.6 },
-          }}
-          className='fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8 bg-black/80 backdrop-blur-md'
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
+          className='fixed inset-0 z-[9999] bg-black/85 backdrop-blur-md text-white'
           onClick={onClose}
         >
-          {/* Main Expanding Shell */}
           <motion.div
-            layoutId={`location-card-${location.id}`}
-            transition={{
-              duration: 0.4,
-              ease: ANIMATION_EASE,
-            }}
-            className='relative w-full max-w-5xl bg-neutral-900 rounded-[30px] md:rounded-[40px] overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-[70vh] max-h-[800px] border border-white/10 shadow-2xl z-[10000]'
+            initial={{ scale: 0.96, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.96, opacity: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className='relative w-full h-full flex flex-col'
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button UI */}
             <button
               onClick={onClose}
-              className='absolute top-4 right-4 md:top-6 md:right-6 z-[110] p-2 bg-black/40 md:bg-white/5 hover:bg-red-600 text-white rounded-full transition-colors cursor-pointer backdrop-blur-sm'
+              className='absolute top-4 right-4 md:top-6 md:right-6 z-[110] p-2 bg-white/10 hover:bg-red-600 text-white rounded-full transition-colors cursor-pointer'
+              aria-label='Đóng'
             >
               <X size={20} />
             </button>
 
-            {/* Left side: Image Area */}
-            <div className='relative w-full md:w-1/2 h-64 md:h-full overflow-hidden bg-neutral-800 shrink-0'>
-              <motion.div
-                layoutId={`location-image-${location.id}`}
-                className='absolute inset-0'
-                layout
-              >
-                {location.full_image_url &&
-                typeof location.full_image_url === 'string' &&
-                location.full_image_url.trim() !== '' ? (
-                  <Image
-                    src={location.full_image_url}
-                    alt={location.name}
-                    fill
-                    unoptimized
-                    priority
-                    className='object-cover'
+            <div className='flex-1 flex flex-col md:flex-row gap-4 md:gap-6 p-4 md:p-8 max-w-screen-2xl w-full mx-auto'>
+              {/* Left: PDF viewer */}
+              <div className='w-full md:w-[70%] bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl min-h-[50vh] md:min-h-[75vh]'>
+                {pdfSrc ? (
+                  <iframe
+                    src={pdfSrc}
+                    title={`Quotation - ${location.name}`}
+                    className='w-full h-full'
                   />
                 ) : (
-                  <div className='w-full h-full bg-neutral-800 flex items-center justify-center'>
-                    <span className='text-neutral-500'>No Image</span>
+                  <div className='w-full h-full flex flex-col items-center justify-center gap-3 text-neutral-400 px-6 text-center'>
+                    <FileText className='text-red-600' size={32} />
+                    <p>Chưa có file quotation cho địa điểm này.</p>
                   </div>
                 )}
-                <div className='absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/20' />
-              </motion.div>
-            </div>
+              </div>
 
-            {/* Right side: Content Area */}
-            <div className='flex flex-col w-full md:w-1/2 overflow-hidden'>
-              <div className='p-6 md:p-12 h-full flex flex-col overflow-hidden'>
-                {/* Text content - Reverted to simple motion divs without layoutId for stability */}
-                <div className='mb-6 md:mb-8 relative'>
-                  <p className='text-red-500 font-bold tracking-[0.2em] uppercase mb-1 text-xs md:text-sm'>
+              {/* Right: Tours list */}
+              <div className='w-full md:w-[30%] bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden'>
+                <div className='p-6 border-b border-white/5'>
+                  <p className='text-red-500 font-bold tracking-[0.2em] uppercase text-xs mb-2'>
                     Các cung
                   </p>
-                  <h2 className='text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-2 md:mb-4'>
+                  <h2 className='text-3xl font-black uppercase tracking-tight text-white mb-3'>
                     {location.name}
                   </h2>
-
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.15 }}
-                    className='text-neutral-400 text-xs md:text-sm leading-relaxed max-w-md line-clamp-3 md:line-clamp-none'
-                  >
+                  <p className='text-neutral-400 text-sm leading-relaxed line-clamp-3'>
                     {location.description}
-                  </motion.p>
+                  </p>
                 </div>
 
-                {/* The rest of the list fades in */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className='flex-1 flex flex-col overflow-hidden'
-                >
-                  <div className='flex-1 overflow-y-auto pr-2 custom-scrollbar'>
-                    <h3 className='text-white font-bold text-lg mb-6 flex items-center gap-2'>
+                <div className='flex-1 overflow-y-auto p-6 custom-scrollbar'>
+                  <div className='flex items-center justify-between mb-4 gap-3'>
+                    <h3 className='text-white font-bold text-lg flex items-center gap-2'>
                       Tours sắp tới
                       <span className='px-2 py-0.5 bg-red-600/20 text-red-500 text-[10px] rounded-full uppercase tracking-widest'>
                         {tours.length} tours
                       </span>
                     </h3>
-
-                    {loading ? (
-                      <div className='space-y-4'>
-                        {[1, 2, 3].map((i) => (
-                          <div
-                            key={i}
-                            className='h-24 bg-white/5 rounded-2xl'
-                          />
-                        ))}
-                      </div>
-                    ) : tours.length > 0 ? (
-                      <div className='space-y-4'>
-                        {tours.map((tour) => (
-                          <div
-                            key={tour.id}
-                            className='group bg-white/5 hover:bg-white/10 p-5 rounded-2xl border border-white/5 cursor-pointer flex justify-between items-center transition-colors'
-                          >
-                            <div className='flex flex-col gap-2'>
-                              <h4 className='font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-wide'>
-                                {tour.title}
-                              </h4>
-                              <div className='flex items-center gap-4 text-xs text-neutral-400'>
-                                <span className='flex items-center gap-1.5'>
-                                  <Calendar
-                                    size={14}
-                                    className='text-red-600'
-                                  />
-                                  {formatDateDdMm(tour.start_date)}
-                                </span>
-                                <span className='flex items-center gap-1.5'>
-                                  <Users size={14} className='text-red-600' />
-                                  Còn {tour.slots_left} chỗ
-                                </span>
-                              </div>
-                            </div>
-                            <div className='p-2 rounded-full bg-white/5 group-hover:bg-red-600 group-hover:text-white transition-colors text-neutral-500'>
-                              <MoveRight size={20} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className='py-12 text-center'>
-                        <p className='text-neutral-500 italic'>
-                          Hiện chưa có tour cho cung đường này.
-                        </p>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className='mt-8 pt-6 border-t border-white/5 flex justify-end items-center'>
-                    <button className='text-neutral-500 hover:text-red-500 text-xs font-bold flex items-center gap-1 group uppercase tracking-[0.2em] transition-colors cursor-pointer'>
-                      Xem thêm
-                      <MoveRight size={14} />
+                    <button className='text-neutral-500 hover:text-red-500 text-xs font-bold flex items-center gap-1 uppercase tracking-[0.2em] transition-colors cursor-pointer'>
+                      Xem thêm <MoveRight size={14} />
                     </button>
                   </div>
-                </motion.div>
+
+                  {loading ? (
+                    <div className='space-y-3'>
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className='h-20 bg-white/5 rounded-2xl animate-pulse' />
+                      ))}
+                    </div>
+                  ) : tours.length > 0 ? (
+                    <div className='space-y-3'>
+                      {tours.map((tour) => (
+                        <div
+                          key={tour.id}
+                          className='group bg-white/5 hover:bg-white/10 p-4 rounded-2xl border border-white/5 cursor-pointer flex justify-between items-center transition-colors'
+                        >
+                          <div className='flex flex-col gap-1.5'>
+                            <h4 className='font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-wide'>
+                              {tour.title}
+                            </h4>
+                            <div className='flex items-center gap-4 text-xs text-neutral-400'>
+                              <span className='flex items-center gap-1.5'>
+                                <Calendar size={14} className='text-red-600' />
+                                {formatDateDdMm(tour.start_date)}
+                              </span>
+                              <span className='flex items-center gap-1.5'>
+                                <Users size={14} className='text-red-600' />
+                                Còn {tour.slots_left} chỗ
+                              </span>
+                            </div>
+                          </div>
+                          <div className='p-2 rounded-full bg-white/5 group-hover:bg-red-600 group-hover:text-white transition-colors text-neutral-500'>
+                            <MoveRight size={18} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className='py-10 text-center'>
+                      <p className='text-neutral-500 italic'>
+                        Hiện chưa có tour cho cung đường này.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* <div className='p-6 border-t border-white/5 flex justify-end items-center'>
+                  <button className='text-neutral-500 hover:text-red-500 text-xs font-bold flex items-center gap-1 uppercase tracking-[0.2em] transition-colors cursor-pointer'>
+                    Xem lịch trình {location.name}
+                    <MoveRight size={14} />
+                  </button>
+                </div> */}
               </div>
             </div>
           </motion.div>

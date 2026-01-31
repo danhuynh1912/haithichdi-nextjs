@@ -4,6 +4,7 @@ export interface Location {
   elevation_m: number;
   description: string;
   full_image_url: string | null;
+  quotation_file_url?: string | null;
 }
 
 export interface Tour {

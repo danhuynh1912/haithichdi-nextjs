@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Location } from '../types';
 import LocationCard from './location-card';
@@ -9,33 +9,43 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 
 interface LocationCarouselProps {
   locations: Location[];
+  activeIndex?: number;
   onActiveChange: (index: number) => void;
   onDetailsClick: (location: Location) => void;
 }
 
 export default function LocationCarousel({
   locations,
+  activeIndex: activeIndexProp,
   onActiveChange,
   onDetailsClick,
 }: LocationCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const is2xl = useMediaQuery('(min-width: 1536px)');
 
+  useEffect(() => {
+    if (typeof activeIndexProp === 'number' && activeIndexProp !== activeIndex) {
+      setActiveIndex(activeIndexProp);
+    }
+  }, [activeIndexProp, activeIndex]);
+
+  const updateActive = (index: number) => {
+    setActiveIndex(index);
+    onActiveChange(index);
+  };
+
   const handleNext = () => {
     const nextIndex = (activeIndex + 1) % locations.length;
-    setActiveIndex(nextIndex);
-    onActiveChange(nextIndex);
+    updateActive(nextIndex);
   };
 
   const handlePrev = () => {
     const nextIndex = (activeIndex - 1 + locations.length) % locations.length;
-    setActiveIndex(nextIndex);
-    onActiveChange(nextIndex);
+    updateActive(nextIndex);
   };
 
   const setIndex = (index: number) => {
-    setActiveIndex(index);
-    onActiveChange(index);
+    updateActive(index);
   };
 
   if (!locations.length) return null;

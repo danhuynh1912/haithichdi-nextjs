@@ -13,3 +13,13 @@ export function formatDateDdMm(dateValue: string) {
 
   return `${day}/${month}`
 }
+
+export function slugify(value: string) {
+  if (!value) return ''
+  const normalized = value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+
+  return normalized.replace(/[^a-z0-9]/g, '')
+}
