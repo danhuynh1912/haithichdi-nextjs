@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { Location, Tour } from '../types';
 import { locationService } from '@/lib/services/location';
 import { X, Calendar, Users, MoveRight, FileText } from 'lucide-react';
@@ -16,6 +17,7 @@ export default function LocationDetailModal({
   location,
   onClose,
 }: LocationDetailModalProps) {
+  const router = useRouter();
   const [tours, setTours] = useState<Tour[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -134,6 +136,7 @@ export default function LocationDetailModal({
                         <div
                           key={tour.id}
                           className='group bg-white/5 hover:bg-white/10 p-4 rounded-2xl border border-white/5 cursor-pointer flex justify-between items-center transition-colors'
+                          onClick={() => router.push(`/tour-booking/${tour.id}`)}
                         >
                           <div className='flex flex-col gap-1.5'>
                             <h4 className='font-bold text-white group-hover:text-red-500 transition-colors uppercase tracking-wide'>
