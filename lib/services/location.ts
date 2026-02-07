@@ -7,9 +7,7 @@ export const locationService = {
     return response.data;
   },
   getToursByLocation: async (locationId: number) => {
-    const response = await api.get<Tour[]>(
-      `/api/tours/?location_id=${locationId}`,
-    );
+    const response = await api.get<Tour[]>(`/api/tours/?location_id=${locationId}`);
     return response.data;
   },
 };

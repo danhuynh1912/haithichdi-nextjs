@@ -34,12 +34,12 @@ export default function SiteHeader() {
         <Link href='/locations' className='hover:text-red-500 transition-colors'>
           Địa điểm
         </Link>
-        <div className='cursor-pointer hover:text-red-500 transition-colors'>
+        <Link href='/tours' className='hover:text-red-500 transition-colors'>
           Tours
-        </div>
-        <div className='cursor-pointer hover:text-red-500 transition-colors'>
+        </Link>
+        <Link href='/about' className='hover:text-red-500 transition-colors'>
           Về chúng tôi
-        </div>
+        </Link>
         <Link href='/contact' className='hover:text-red-500 transition-colors'>
           Liên hệ
         </Link>

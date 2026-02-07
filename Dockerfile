@@ -1,12 +1,12 @@
-FROM node:25-alpine
+FROM node:24-bullseye
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm i
+COPY package*.json ./
+
+RUN npm install
 
 COPY . .
 
 EXPOSE 3000
-
 CMD ["npm", "run", "dev"]

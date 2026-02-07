@@ -5,9 +5,9 @@ import { motion, stagger } from 'motion/react';
 import 'simplebar-react/dist/simplebar.min.css';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import api from '@/lib/api';
 import HotTour, { HotTourData, MotionHotTour } from './hot-tour';
 import { ANIMATION_EASE } from '@/lib/constants';
+import { tourService } from '@/lib/services/tour';
 
 const list = {
   hidden: {
@@ -27,15 +27,10 @@ const item = {
   visible: { opacity: 1, transform: 'translateX(0px)' },
 };
 
-const fetchHotTours = async (): Promise<HotTourData[]> => {
-  const response = await api.get<HotTourData[]>('/api/tours/hot/');
-  return response.data;
-};
-
 const HotTours = ({ className }: { className: string }) => {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['hot-tours'],
-    queryFn: fetchHotTours,
+    queryFn: tourService.getHotTours,
   });
 
   return (
