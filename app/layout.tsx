@@ -1,6 +1,5 @@
 import { Be_Vietnam_Pro } from 'next/font/google';
 import './globals.css';
-import { PageTransition } from '@/components/page-transition';
 import Providers from './providers';
 import { createRootMetadata } from '@/lib/seo';
 import SiteHeader from '@/components/site-header';

@@ -7,7 +7,7 @@ const SERVER_API_BASE_URL = process.env.SERVER_API_BASE_URL;
 export async function generateMetadata({
   params,
 }: {
-  params: { tourId: string };
+  params: Promise<{ tourId: string }>;
 }): Promise<Metadata> {
   const { tourId: id } = await params;
 
@@ -46,7 +46,11 @@ export async function generateMetadata({
   });
 }
 
-export default async function Page({ params }: { params: { tourId: string } }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ tourId: string }>;
+}) {
   const { tourId } = await params;
   return <TourBookingClient tourIdParam={tourId} />;
 }

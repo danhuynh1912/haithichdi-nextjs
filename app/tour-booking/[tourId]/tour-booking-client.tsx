@@ -3,6 +3,7 @@
 import { memo, useActionState, useMemo, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { tourService, TourDetail, BookingPayload } from '@/lib/services/tour';
+import { isAxiosError } from 'axios';
 import { formatDateDdMm } from '@/lib/utils';
 import {
   Calendar,
@@ -77,7 +78,9 @@ export default function TourBookingClient({
     return (
       <main className='min-h-screen bg-black text-white flex flex-col items-center justify-center gap-4 px-6 text-center'>
         <AlertTriangle className='text-[#d00600]' size={36} />
-        <p className='text-lg'>Không tìm thấy tour hoặc tour đã ngừng hoạt động.</p>
+        <p className='text-lg'>
+          Không tìm thấy tour hoặc tour đã ngừng hoạt động.
+        </p>
         <button
           onClick={() => router.back()}
           className='px-4 py-2 rounded-full border border-white/20 text-sm hover:border-white transition-colors flex items-center gap-2'
@@ -194,12 +197,15 @@ const BookingForm = memo(function BookingForm({
           status: 'success',
           message: 'Đăng ký thành công! Chúng tôi sẽ liên hệ sớm.',
         };
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err);
-        const apiMessage =
-          err?.response?.data?.phone?.[0] ||
-          err?.response?.data?.detail ||
-          err?.response?.data?.message;
+        let apiMessage: string | undefined;
+        if (isAxiosError(err)) {
+          const data = err.response?.data as
+            | { phone?: string[]; detail?: string; message?: string }
+            | undefined;
+          apiMessage = data?.phone?.[0] || data?.detail || data?.message;
+        }
         return {
           status: 'error',
           message: apiMessage || 'Đăng ký thất bại, vui lòng thử lại.',

@@ -5,7 +5,7 @@ import { motion, stagger } from 'motion/react';
 import 'simplebar-react/dist/simplebar.min.css';
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import HotTour, { HotTourData, MotionHotTour } from './hot-tour';
+import { MotionHotTour } from './hot-tour';
 import { ANIMATION_EASE } from '@/lib/constants';
 import { tourService } from '@/lib/services/tour';
 

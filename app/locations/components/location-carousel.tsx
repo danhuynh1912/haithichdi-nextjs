@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Location } from '../types';
 import LocationCard from './location-card';
@@ -20,17 +20,15 @@ export default function LocationCarousel({
   onActiveChange,
   onDetailsClick,
 }: LocationCarouselProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [internalActiveIndex, setInternalActiveIndex] = useState(0);
   const is2xl = useMediaQuery('(min-width: 1536px)');
-
-  useEffect(() => {
-    if (typeof activeIndexProp === 'number' && activeIndexProp !== activeIndex) {
-      setActiveIndex(activeIndexProp);
-    }
-  }, [activeIndexProp, activeIndex]);
+  const activeIndex =
+    typeof activeIndexProp === 'number' ? activeIndexProp : internalActiveIndex;
 
   const updateActive = (index: number) => {
-    setActiveIndex(index);
+    if (typeof activeIndexProp !== 'number') {
+      setInternalActiveIndex(index);
+    }
     onActiveChange(index);
   };
 

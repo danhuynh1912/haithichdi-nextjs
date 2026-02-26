@@ -8,8 +8,8 @@ import { formatDateDdMm } from '@/lib/utils';
 export type HotTourData = {
   id: number;
   title: string;
-  start_date: string;
-  end_date: string;
+  start_date: string | null;
+  end_date: string | null;
   image_url: string | null;
   location: {
     id: number;
@@ -24,8 +24,13 @@ type HotTourProps = React.ComponentPropsWithoutRef<'div'> & {
   tour: HotTourData;
 };
 
-const formatDateRange = (startDate: string, endDate: string) => {
-  return `${formatDateDdMm(startDate)} – ${formatDateDdMm(endDate)}`;
+const formatDateRange = (startDate: string | null, endDate: string | null) => {
+  if (startDate && endDate) {
+    return `${formatDateDdMm(startDate)} – ${formatDateDdMm(endDate)}`;
+  }
+  if (startDate) return formatDateDdMm(startDate);
+  if (endDate) return formatDateDdMm(endDate);
+  return 'TBD';
 };
 
 const HotTour = forwardRef<HTMLDivElement, HotTourProps>(
@@ -33,8 +38,6 @@ const HotTour = forwardRef<HTMLDivElement, HotTourProps>(
     const imageUrl = tour.image_url ?? '/images/tachinhu1.jpg';
     const isRemoteImage = imageUrl.startsWith('http');
     const dateRange = formatDateRange(tour.start_date, tour.end_date);
-    const locationName = tour.location?.name ?? 'Chua xac dinh';
-
     return (
       <div
         ref={ref}

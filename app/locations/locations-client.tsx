@@ -42,7 +42,7 @@ export default function LocationsClient() {
     if (!paramName && !!selectedLocation) {
       setSelectedLocation(null);
     }
-  }, [paramName]);
+  }, [paramName, selectedLocation]);
 
   // Open modal & sync query param
   const openLocation = useCallback(

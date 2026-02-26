@@ -1,6 +1,5 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { TourListItem } from '../types';
 import { tourService } from '@/lib/services/tour';
 
 export type ToursFilter = {

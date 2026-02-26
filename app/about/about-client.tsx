@@ -24,8 +24,8 @@ type LeaderCard = Leader & {
   role_label?: string;
   relationship?: string;
   dob?: string;
-  highlight?: string;
-  location?: string;
+  highlight?: string | null;
+  location?: string | null;
 };
 
 const storyParagraphs = [

@@ -1,11 +1,9 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export function PageTransition() {
-  const pathname = usePathname();
   const [show, setShow] = useState(true);
 
   useEffect(() => {
