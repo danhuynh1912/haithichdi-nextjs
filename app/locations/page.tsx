@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { createMetadata } from '@/lib/seo';
 import LocationsClient from './locations-client';
 
@@ -9,5 +10,15 @@ export const metadata = createMetadata({
 });
 
 export default function Page() {
-  return <LocationsClient />;
+  return (
+    <Suspense
+      fallback={
+        <main className='min-h-screen bg-black flex items-center justify-center text-white'>
+          <div className='w-12 h-12 border-4 border-red-600 border-t-transparent rounded-full animate-spin' />
+        </main>
+      }
+    >
+      <LocationsClient />
+    </Suspense>
+  );
 }

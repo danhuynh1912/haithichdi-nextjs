@@ -45,7 +45,7 @@ Key engineering signals:
 
 ## 4. Tech Stack
 
-- Framework: `Next.js 16` (App Router)
+- Framework: `Next.js 15.5.6` (App Router)
 - Language: `TypeScript`
 - UI: `Tailwind CSS v4`, Radix primitives, custom components
 - Data access: `Axios` + `@tanstack/react-query`
@@ -122,11 +122,15 @@ Create `frontend/.env`:
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 SERVER_API_BASE_URL=http://backend:8000
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_MEDIA_BASE_URL=http://localhost:9000
 ```
 
 Meaning:
 - `NEXT_PUBLIC_API_BASE_URL`: used by client-side API calls.
 - `SERVER_API_BASE_URL`: used by server-side metadata fetch in booking route.
+- `NEXT_PUBLIC_SITE_URL`: used for canonical URLs and social metadata.
+- `NEXT_PUBLIC_MEDIA_BASE_URL`: optional image/media origin allow-list for `next/image`.
 
 ## 9. Run Locally
 
@@ -174,4 +178,3 @@ This starts `frontend`, `backend`, `db`, `minio`, and `minio-init`.
 - No route-level error boundary strategy yet.
 - No i18n implementation yet (currently Vietnamese-first product copy).
 - Could add booking funnel analytics for conversion insights.
-
