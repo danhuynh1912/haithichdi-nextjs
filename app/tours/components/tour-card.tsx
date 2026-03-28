@@ -15,7 +15,6 @@ interface TourCardProps {
 }
 
 function TourCardBase({ tour, showImage = true, isHotTour }: TourCardProps) {
-  console.log('Rendering TourCard:', tour);
   return (
     <Link
       href={`/tour-booking/${tour.id}`}
