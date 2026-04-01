@@ -1,8 +1,13 @@
 'use client';
 
-import { memo, useActionState, useMemo, type ReactNode } from 'react';
+import { memo, useActionState, useEffect, useMemo, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { tourService, TourDetail, BookingPayload } from '@/lib/services/tour';
+import {
+  tourService,
+  TourDetail,
+  BookingPayload,
+  buildBookingSuccessRedirectPath,
+} from '@/lib/services/tour';
 import { isAxiosError } from 'axios';
 import { formatDateDdMm } from '@/lib/utils';
 import {
@@ -12,9 +17,9 @@ import {
   Mail,
   User,
   FileText,
-  CheckCircle2,
   AlertTriangle,
   ChevronLeft,
+  LoaderCircle,
 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -22,9 +27,9 @@ import { BookingFlowHeader } from '../components/booking-flow-header';
 import BackgroundBlur from '@/app/locations/components/background-blur';
 
 type BookingFormState =
-  | { status: 'idle'; message?: string }
-  | { status: 'success'; message: string }
-  | { status: 'error'; message: string };
+  | { status: 'idle'; message?: string; redirectTo?: undefined }
+  | { status: 'success'; message: string; redirectTo: string }
+  | { status: 'error'; message: string; redirectTo?: undefined };
 
 const initialFormState: BookingFormState = { status: 'idle', message: '' };
 
@@ -162,6 +167,7 @@ const BookingForm = memo(function BookingForm({
   tourId: number;
   locationName: string;
 }) {
+  const router = useRouter();
   const [formState, formAction] = useActionState<BookingFormState, FormData>(
     async (_prev, formData) => {
       const full_name = (formData.get('full_name') || '').toString().trim();
@@ -192,10 +198,15 @@ const BookingForm = memo(function BookingForm({
       };
 
       try {
-        await tourService.createBooking(payload);
+        const booking = await tourService.createBooking(payload);
         return {
           status: 'success',
-          message: 'Đăng ký thành công! Chúng tôi sẽ liên hệ sớm.',
+          message: 'Đăng ký thành công! Đang chuyển sang màn hình xác nhận...',
+          redirectTo: buildBookingSuccessRedirectPath({
+            tourId,
+            bookingId: booking.id,
+            fullName: full_name,
+          }),
         };
       } catch (err: unknown) {
         console.error(err);
@@ -215,6 +226,11 @@ const BookingForm = memo(function BookingForm({
     initialFormState,
   );
 
+  useEffect(() => {
+    if (formState.status !== 'success') return;
+    router.push(formState.redirectTo);
+  }, [formState, router]);
+
   return (
     <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col gap-6'>
       <div className='flex flex-col gap-1'>
@@ -226,7 +242,7 @@ const BookingForm = memo(function BookingForm({
 
       {formState.status === 'success' && (
         <div className='flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#d00600]/15 border border-[#d00600]/40 text-[#d00600] text-sm'>
-          <CheckCircle2 size={18} />
+          <LoaderCircle size={18} className='animate-spin' />
           <span>{formState.message}</span>
         </div>
       )}

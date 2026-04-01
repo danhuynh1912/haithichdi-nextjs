@@ -29,6 +29,29 @@ export interface BookingResponse {
   status: string;
 }
 
+export interface BookingSuccessRedirectInput {
+  tourId: number;
+  bookingId: number;
+  fullName?: string;
+}
+
+export function buildBookingSuccessRedirectPath({
+  tourId,
+  bookingId,
+  fullName,
+}: BookingSuccessRedirectInput) {
+  const searchParams = new URLSearchParams();
+  searchParams.set('bookingId', String(bookingId));
+
+  const safeFullName = fullName?.trim();
+  if (safeFullName) {
+    searchParams.set('fullName', safeFullName);
+  }
+
+  const query = searchParams.toString();
+  return `/tour-booking/${tourId}/success${query ? `?${query}` : ''}`;
+}
+
 export interface TourQueryParams {
   locationIds?: number[];
   search?: string;
