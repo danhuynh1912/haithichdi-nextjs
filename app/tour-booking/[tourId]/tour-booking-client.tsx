@@ -2,12 +2,8 @@
 
 import { memo, useActionState, useEffect, useMemo, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  tourService,
-  TourDetail,
-  BookingPayload,
-  buildBookingSuccessRedirectPath,
-} from '@/lib/services/tour';
+import { tourService, TourDetail, BookingPayload } from '@/lib/services/tour';
+import { saveBookingId } from '@/lib/services/booking-storage';
 import { isAxiosError } from 'axios';
 import { formatDateDdMm } from '@/lib/utils';
 import {
@@ -27,9 +23,9 @@ import { BookingFlowHeader } from '../components/booking-flow-header';
 import BackgroundBlur from '@/app/locations/components/background-blur';
 
 type BookingFormState =
-  | { status: 'idle'; message?: string; redirectTo?: undefined }
-  | { status: 'success'; message: string; redirectTo: string }
-  | { status: 'error'; message: string; redirectTo?: undefined };
+  | { status: 'idle'; message?: string; redirectTo?: undefined; bookingId?: undefined }
+  | { status: 'success'; message: string; redirectTo: string; bookingId: number }
+  | { status: 'error'; message: string; redirectTo?: undefined; bookingId?: undefined };
 
 const initialFormState: BookingFormState = { status: 'idle', message: '' };
 
@@ -202,11 +198,8 @@ const BookingForm = memo(function BookingForm({
         return {
           status: 'success',
           message: 'Đăng ký thành công! Đang chuyển sang màn hình xác nhận...',
-          redirectTo: buildBookingSuccessRedirectPath({
-            tourId,
-            bookingId: booking.id,
-            fullName: full_name,
-          }),
+          redirectTo: `/tour-booking/${tourId}/success`,
+          bookingId: booking.id,
         };
       } catch (err: unknown) {
         console.error(err);
@@ -228,6 +221,7 @@ const BookingForm = memo(function BookingForm({
 
   useEffect(() => {
     if (formState.status !== 'success') return;
+    saveBookingId(formState.bookingId);
     router.push(formState.redirectTo);
   }, [formState, router]);
 

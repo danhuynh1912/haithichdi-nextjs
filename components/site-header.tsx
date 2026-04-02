@@ -2,16 +2,33 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { TicketCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  hasStoredBookingIds,
+  subscribeBookingIdsChanged,
+} from '@/lib/services/booking-storage';
 
 export default function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
+  const [showBookedToursItem, setShowBookedToursItem] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 0);
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const syncBookedToursItem = () => {
+      setShowBookedToursItem(hasStoredBookingIds());
+    };
+
+    syncBookedToursItem();
+    const unsubscribe = subscribeBookingIdsChanged(syncBookedToursItem);
+
+    return unsubscribe;
   }, []);
 
   return (
@@ -43,6 +60,15 @@ export default function SiteHeader() {
         <Link href='/contact' className='hover:text-red-500 transition-colors'>
           Liên hệ
         </Link>
+        {showBookedToursItem && (
+          <Link
+            href='/my-bookings'
+            className='hover:text-[#43d88a] transition-colors inline-flex items-center gap-2 whitespace-nowrap'
+          >
+            <TicketCheck size={16} />
+            Tours bạn đã đặt
+          </Link>
+        )}
       </nav>
     </header>
   );
