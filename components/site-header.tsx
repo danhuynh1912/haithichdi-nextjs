@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { TicketCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -40,9 +41,17 @@ export default function SiteHeader() {
     >
       <Link
         href='/'
-        className='text-2xl font-semibold uppercase tracking-tight hover:text-red-500 transition-colors'
+        aria-label='Hải Thích Đi'
+        className='inline-flex items-center shrink-0'
       >
-        haithichdi
+        <Image
+          src='/haithichdi-logo-white.png'
+          alt='Hải Thích Đi'
+          width={188}
+          height={52}
+          priority
+          className='h-9 md:h-10 w-auto hover:opacity-85 transition-opacity'
+        />
       </Link>
       <nav className='flex gap-8 lg:gap-12 text-sm lg:text-base'>
         <Link href='/' className='hover:text-red-500 transition-colors'>

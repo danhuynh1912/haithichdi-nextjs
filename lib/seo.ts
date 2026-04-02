@@ -42,6 +42,11 @@ export function createRootMetadata(): Metadata {
       index: true,
       follow: true,
     },
+    icons: {
+      icon: [{ url: '/haithichdi-logo-red.png', type: 'image/png' }],
+      shortcut: ['/haithichdi-logo-red.png'],
+      apple: [{ url: '/haithichdi-logo-red.png', type: 'image/png' }],
+    },
     alternates: {
       canonical: SITE_URL,
     },
