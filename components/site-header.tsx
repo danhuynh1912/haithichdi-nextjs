@@ -35,7 +35,7 @@ export default function SiteHeader() {
   return (
     <header
       className={cn(
-        'fixed top-0 left-0 right-0 z-[1000] text-white flex items-center justify-between p-6 lg:p-8 bg-gradient-to-b from-black to-black/0 transition-colors',
+        'fixed top-0 left-0 right-0 z-[1000] text-white flex items-center justify-between px-6 py-4 lg:px-8 lg:py-6 bg-gradient-to-b from-black to-black/0 transition-colors',
         scrolled && 'backdrop-blur-md shadow-lg',
       )}
     >
@@ -47,10 +47,10 @@ export default function SiteHeader() {
         <Image
           src='/haithichdi-logo-white.png'
           alt='Hải Thích Đi'
-          width={188}
-          height={52}
+          width={2366}
+          height={2366}
           priority
-          className='h-9 md:h-10 w-auto hover:opacity-85 transition-opacity'
+          className='h-14 md:h-16 w-auto hover:opacity-85 transition-opacity'
         />
       </Link>
       <nav className='flex gap-8 lg:gap-12 text-sm lg:text-base'>

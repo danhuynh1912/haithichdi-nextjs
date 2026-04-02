@@ -6,6 +6,7 @@ export const SITE_URL =
 export const DEFAULT_DESCRIPTION =
   'Hải Thích Đi - Chuyên tour trekking Việt Nam, khám phá thiên nhiên và văn hóa địa phương bền vững.';
 const DEFAULT_IMAGE = '/images/haithichdi1.webp';
+const ICON_VERSION = '20260402';
 
 type SeoParams = {
   title?: string;
@@ -43,9 +44,12 @@ export function createRootMetadata(): Metadata {
       follow: true,
     },
     icons: {
-      icon: [{ url: '/haithichdi-logo-red.png', type: 'image/png' }],
-      shortcut: ['/haithichdi-logo-red.png'],
-      apple: [{ url: '/haithichdi-logo-red.png', type: 'image/png' }],
+      icon: [
+        { url: `/favicon.ico?v=${ICON_VERSION}`, type: 'image/x-icon' },
+        { url: `/icon.png?v=${ICON_VERSION}`, type: 'image/png' },
+      ],
+      shortcut: [`/favicon.ico?v=${ICON_VERSION}`],
+      apple: [{ url: `/apple-icon.png?v=${ICON_VERSION}`, type: 'image/png' }],
     },
     alternates: {
       canonical: SITE_URL,
