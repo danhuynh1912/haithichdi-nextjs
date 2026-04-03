@@ -26,7 +26,7 @@ export function BookingFlowHeader({
   return (
     <div
       className={cn(
-        'flex items-center gap-3 text-sm text-neutral-400 uppercase tracking-[0.2em]',
+        'flex items-center gap-3 text-sm text-neutral-400 uppercase tracking-normal md:tracking-[0.2em]',
         className,
       )}
     >

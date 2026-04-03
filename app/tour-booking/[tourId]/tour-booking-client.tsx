@@ -100,7 +100,7 @@ export default function TourBookingClient({
         <header className='flex flex-col gap-2'>
           <BookingFlowHeader trail={[`Booking tour ${tour.location.name}`]} />
 
-          <h1 className='text-3xl md:text-4xl font-black uppercase tracking-tight'>
+          <h1 className='text-2xl md:text-4xl font-black uppercase tracking-tight'>
             {tour.title}
           </h1>
           <div className='flex flex-wrap items-center gap-4 text-neutral-400 text-sm'>
@@ -226,7 +226,7 @@ const BookingForm = memo(function BookingForm({
   }, [formState, router]);
 
   return (
-    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col gap-6'>
+    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-5 md:p-8 flex flex-col gap-6'>
       <div className='flex flex-col gap-1'>
         <h2 className='text-2xl font-black text-white'>Đăng ký ngay</h2>
         <p className='text-neutral-400 text-sm'>

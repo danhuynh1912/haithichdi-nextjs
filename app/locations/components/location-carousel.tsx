@@ -50,7 +50,7 @@ export default function LocationCarousel({
   };
 
   const handleCardClick = (location: Location, index: number) => {
-    if (isMobile) {
+    if (isMobile && index === activeIndex) {
       onDetailsClick(location);
       return;
     }
