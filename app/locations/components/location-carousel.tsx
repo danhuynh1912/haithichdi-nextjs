@@ -10,6 +10,7 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 interface LocationCarouselProps {
   locations: Location[];
   activeIndex?: number;
+  compact?: boolean;
   onActiveChange: (index: number) => void;
   onDetailsClick: (location: Location) => void;
 }
@@ -17,11 +18,13 @@ interface LocationCarouselProps {
 export default function LocationCarousel({
   locations,
   activeIndex: activeIndexProp,
+  compact = false,
   onActiveChange,
   onDetailsClick,
 }: LocationCarouselProps) {
   const [internalActiveIndex, setInternalActiveIndex] = useState(0);
   const is2xl = useMediaQuery('(min-width: 1536px)');
+  const isMobile = useMediaQuery('(max-width: 767px)');
   const activeIndex =
     typeof activeIndexProp === 'number' ? activeIndexProp : internalActiveIndex;
 
@@ -46,14 +49,28 @@ export default function LocationCarousel({
     updateActive(index);
   };
 
+  const handleCardClick = (location: Location, index: number) => {
+    if (isMobile) {
+      onDetailsClick(location);
+      return;
+    }
+    setIndex(index);
+  };
+
   if (!locations.length) return null;
 
   return (
     <>
-      <div className='relative w-full flex flex-col items-center justify-center min-h-[500px] overflow-visible'>
+      <div
+        className={`relative w-full flex flex-col items-center justify-center overflow-visible ${
+          compact ? 'min-h-[340px]' : 'min-h-[500px]'
+        }`}
+      >
         {/* Carousel Container with Perspective */}
         <div
-          className='relative w-full h-[calc(100vh-400px)] flex items-center justify-center'
+          className={`relative w-full flex items-center justify-center ${
+            compact ? 'h-[280px]' : 'h-[calc(100vh-400px)]'
+          }`}
           style={{ perspective: '1200px' }}
         >
           {locations.map((location, index) => (
@@ -63,7 +80,9 @@ export default function LocationCarousel({
               index={index}
               activeIndex={activeIndex}
               is2xl={is2xl}
-              onClick={() => setIndex(index)}
+              compact={compact}
+              cardTapOpensDetails={isMobile}
+              onClick={() => handleCardClick(location, index)}
               onDetailsClick={onDetailsClick}
             />
           ))}
@@ -71,12 +90,16 @@ export default function LocationCarousel({
       </div>
       <div className='flex flex-col justify-center items-center'>
         {/* Navigation Controls */}
-        <div className='mt-8 flex items-center gap-8'>
+        <div
+          className={`flex items-center ${compact ? 'mt-3 gap-3' : 'mt-8 gap-8'}`}
+        >
           <button
             onClick={handlePrev}
-            className='w-14 h-14 cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90'
+            className={`cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90 ${
+              compact ? 'w-8 h-8' : 'w-9 h-9 md:w-14 md:h-14'
+            }`}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={compact ? 16 : 24} />
           </button>
 
           <div className='flex flex-col items-center'>
@@ -86,10 +109,18 @@ export default function LocationCarousel({
               animate={{ opacity: 1, y: 0 }}
               className='text-center'
             >
-              <h2 className='text-4xl font-black text-white uppercase tracking-wider mb-1'>
+              <h2
+                className={`font-black text-white uppercase mb-1 ${
+                  compact ? 'text-xl tracking-tight' : 'text-4xl tracking-wider'
+                }`}
+              >
                 {locations[activeIndex].name}
               </h2>
-              <p className='text-red-500 font-medium tracking-widest'>
+              <p
+                className={`text-red-500 font-medium ${
+                  compact ? 'text-[10px] tracking-[0.12em]' : 'tracking-widest'
+                }`}
+              >
                 {locations[activeIndex].elevation_m}M ABOVE SEA LEVEL
               </p>
             </motion.div>
@@ -97,20 +128,28 @@ export default function LocationCarousel({
 
           <button
             onClick={handleNext}
-            className='w-14 h-14 cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90'
+            className={`cursor-pointer rounded-full border border-white/40 bg-white/5 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-300 text-white/90 ${
+              compact ? 'w-8 h-8' : 'w-9 h-9 md:w-14 md:h-14'
+            }`}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={compact ? 16 : 24} />
           </button>
         </div>
 
         {/* Indicators */}
-        <div className='mt-4 flex gap-2'>
+        <div className={`flex gap-2 ${compact ? 'mt-3' : 'mt-4'}`}>
           {locations.map((_, index) => (
             <div
               key={index}
               onClick={() => setIndex(index)}
               className={`h-1 transition-all duration-300 rounded-full cursor-pointer ${
-                index === activeIndex ? 'w-8 bg-red-600' : 'w-4 bg-white/20'
+                index === activeIndex
+                  ? compact
+                    ? 'w-6 bg-red-600'
+                    : 'w-8 bg-red-600'
+                  : compact
+                    ? 'w-3 bg-white/20'
+                    : 'w-4 bg-white/20'
               }`}
             />
           ))}

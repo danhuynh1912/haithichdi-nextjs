@@ -139,7 +139,7 @@ const PdfPreview = memo(function PdfPreview({
   locationName: string;
 }) {
   return (
-    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl min-h-[60vh]'>
+    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl md:min-h-[60vh]'>
       {pdfSrc ? (
         <iframe
           src={pdfSrc}

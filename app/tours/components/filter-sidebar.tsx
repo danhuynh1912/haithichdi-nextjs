@@ -25,7 +25,7 @@ function FilterSidebarBase({
   return (
     <aside
       className={cn(
-        'w-full md:w-72 bg-neutral-900/80 border border-white/10 rounded-3xl p-4 md:p-6 flex flex-col gap-6 sticky top-28 h-fit',
+        'w-full md:w-72 bg-neutral-900/80 border border-white/10 rounded-3xl p-4 md:p-6 flex flex-col gap-6 md:sticky top-28 h-fit',
         className,
       )}
     >

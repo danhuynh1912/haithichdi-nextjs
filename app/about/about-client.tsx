@@ -331,13 +331,13 @@ function LeaderModal({
     <AnimatePresence>
       {leader && (
         <motion.div
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur'
+          className='fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md md:flex md:items-center md:justify-center'
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className='relative max-w-5xl w-[90vw] bg-gradient-to-br from-[#101010] to-[#0a0a0a] border border-white/10 rounded-3xl overflow-hidden shadow-2xl'
+            className='relative h-full w-full overflow-y-auto bg-gradient-to-br from-[#101010] to-[#0a0a0a] border border-white/10 rounded-none shadow-2xl md:h-auto md:max-h-[90vh] md:max-w-5xl md:w-[90vw] md:rounded-3xl'
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
@@ -345,7 +345,7 @@ function LeaderModal({
           >
             <button
               onClick={onClose}
-              className='absolute right-3 top-3 z-10 rounded-full border border-white/10 bg-black/70 p-2 text-white hover:border-red-400/70 transition'
+              className='absolute right-4 top-4 md:right-3 md:top-3 z-10 rounded-full border border-white/10 bg-black/70 p-2 text-white hover:border-red-400/70 transition'
             >
               <X className='w-4 h-4' />
             </button>

@@ -11,6 +11,8 @@ interface LocationCardProps {
   index: number;
   activeIndex: number;
   is2xl: boolean;
+  compact?: boolean;
+  cardTapOpensDetails?: boolean;
   onClick: () => void;
   onDetailsClick: (location: Location) => void;
 }
@@ -20,6 +22,8 @@ function LocationCardBase({
   index,
   activeIndex,
   is2xl,
+  compact = false,
+  cardTapOpensDetails = false,
   onClick,
   onDetailsClick,
 }: LocationCardProps) {
@@ -81,7 +85,11 @@ function LocationCardBase({
           duration: 0.4,
           ease: ANIMATION_EASE,
         }}
-        className='relative w-[250px] h-[400px] 2xl:w-[300px] 2xl:h-[450px] rounded-[60px] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-[#d1d1d1] group transform-gpu bg-neutral-900 flex'
+        className={`relative overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] border border-[#d1d1d1] group transform-gpu bg-neutral-900 flex ${
+          compact
+            ? 'w-[170px] h-[260px] rounded-[40px]'
+            : 'w-[250px] h-[400px] 2xl:w-[300px] 2xl:h-[450px] rounded-[60px]'
+        }`}
       >
         {/* Left Side (Image Area) - Synchronized with Modal structure but without intermediate layoutId */}
         <div
@@ -117,12 +125,20 @@ function LocationCardBase({
         <div className='w-0 h-full overflow-hidden invisible' />
 
         {/* Floating Overlay Content - Labels no longer use layoutId to stop production flicker */}
-        <div className='absolute inset-0 z-10 flex flex-col justify-end p-8 pointer-events-none'>
+        <div
+          className={`absolute inset-0 z-10 flex flex-col justify-end pointer-events-none ${
+            compact ? 'p-4' : 'p-8'
+          }`}
+        >
           <div className='pointer-events-auto'>
-            <p className='text-red-500 font-bold mb-1'>
+            <p className={`text-red-500 font-bold mb-1 ${compact ? 'text-[10px]' : ''}`}>
               #{String(index + 1).padStart(2, '0')}
             </p>
-            <h3 className='text-3xl font-black uppercase tracking-tight text-white'>
+            <h3
+              className={`font-black uppercase tracking-tight text-white ${
+                compact ? 'text-xl' : 'text-3xl'
+              }`}
+            >
               {location.name}
             </h3>
 
@@ -134,18 +150,22 @@ function LocationCardBase({
               transition={{ ease: ANIMATION_EASE, duration: 0.5 }}
               className='overflow-hidden'
             >
-              <p className='text-sm text-neutral-300 line-clamp-2'>
+              <p className={`text-neutral-300 line-clamp-2 ${compact ? 'text-[11px]' : 'text-sm'}`}>
                 {location.description}
               </p>
 
-              {isCenter && (
+              {isCenter && !cardTapOpensDetails && (
                 <div className='mt-1'>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onDetailsClick(location);
                     }}
-                    className='w-full cursor-pointer py-4 bg-white text-black font-extrabold rounded-full text-xs uppercase tracking-[0.2em] hover:bg-red-600 hover:text-white transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] active:scale-95'
+                    className={`w-full cursor-pointer bg-white text-black font-extrabold rounded-full text-xs uppercase hover:bg-red-600 hover:text-white transition-all duration-300 shadow-[0_10px_30px_rgba(0,0,0,0.5)] active:scale-95 ${
+                      compact
+                        ? 'py-2.5 tracking-[0.08em]'
+                        : 'py-4 tracking-[0.2em]'
+                    }`}
                   >
                     Chi tiết
                   </button>
@@ -164,7 +184,8 @@ export const LocationCard = memo(LocationCardBase, (prev, next) => {
     prev.location.id === next.location.id &&
     prev.index === next.index &&
     prev.activeIndex === next.activeIndex &&
-    prev.is2xl === next.is2xl
+    prev.is2xl === next.is2xl &&
+    prev.cardTapOpensDetails === next.cardTapOpensDetails
   );
 });
 

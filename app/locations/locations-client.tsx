@@ -16,6 +16,7 @@ export default function LocationsClient({
 }: {
   layout?: 'standalone' | 'embedded';
 }) {
+  const isEmbedded = layout === 'embedded';
   const [locations, setLocations] = useState<Location[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -103,8 +104,8 @@ export default function LocationsClient({
   return (
     <main
       className={`relative w-full flex flex-col items-center justify-center overflow-hidden ${
-        layout === 'embedded'
-          ? 'min-h-[calc(100dvh-15rem)] pt-6'
+        isEmbedded
+          ? 'min-h-[calc(100dvh-15rem)] pt-4 text-[11px]'
           : 'h-[calc(100vh)] pt-24'
       }`}
     >
@@ -112,12 +113,12 @@ export default function LocationsClient({
       <BackgroundBlur imageUrl={locations[activeIndex]?.full_image_url} />
 
       <div className='container mx-auto px-4 z-10'>
-        <div className='text-center mb-12'>
+        <div className={`text-center ${isEmbedded ? 'mb-6' : 'mb-12'}`}>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ ease: ANIMATION_EASE, duration: 0.8 }}
-            className='text-red-600 font-bold tracking-[0.3em] uppercase mb-1'
+            className='text-red-600 font-bold tracking-[0.14em] md:tracking-[0.3em] uppercase mb-1 text-[10px] md:text-sm'
           >
             Hải Thích đi
           </motion.p>
@@ -125,7 +126,7 @@ export default function LocationsClient({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, ease: ANIMATION_EASE, duration: 0.8 }}
-            className='text-white text-5xl font-black uppercase tracking-tight'
+            className='text-white text-xl md:text-5xl font-black uppercase tracking-tight'
           >
             CÁC CUNG NỔI BẬT
           </motion.h1>
@@ -134,12 +135,17 @@ export default function LocationsClient({
         <LocationCarousel
           locations={locations}
           activeIndex={activeIndex}
+          compact={isEmbedded}
           onActiveChange={(index) => setActiveIndex(index)}
           onDetailsClick={openLocation}
         />
       </div>
 
-      <LocationDetailModal location={selectedLocation} onClose={closeLocation} />
+      <LocationDetailModal
+        location={selectedLocation}
+        compact={isEmbedded}
+        onClose={closeLocation}
+      />
     </main>
   );
 }

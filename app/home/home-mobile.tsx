@@ -3,16 +3,10 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import {
-  Bell,
-  Calendar,
-  ChevronRight,
-  Search,
-  Tent,
-} from 'lucide-react';
+import { Calendar, ChevronRight, Search, Tent } from 'lucide-react';
 import { locationService } from '@/lib/services/location';
 import { tourService } from '@/lib/services/tour';
-import { formatDateDdMm } from '@/lib/utils';
+import { formatDateDdMm, slugify } from '@/lib/utils';
 
 function HotLocationCard({
   name,
@@ -42,7 +36,7 @@ function HotLocationCard({
       />
       <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10' />
       <div className='absolute left-3 right-3 bottom-3 flex flex-col gap-1'>
-        <p className='font-semibold leading-tight line-clamp-2'>{name}</p>
+        <p className='text-sm font-semibold leading-tight line-clamp-2'>{name}</p>
         <p className='text-xs text-neutral-300'>{elevation}m</p>
       </div>
     </button>
@@ -87,10 +81,10 @@ function HotTourFeatureCard({
       <div className='absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/20' />
       <div className='absolute inset-0 p-4 flex flex-col justify-between'>
         <div>
-          <p className='text-xs uppercase tracking-[0.18em] text-red-200'>
+          <p className='text-[10px] uppercase tracking-[0.08em] text-red-200'>
             {locationName}
           </p>
-          <h3 className='text-xl font-bold mt-1 line-clamp-2'>{title}</h3>
+          <h3 className='text-lg font-bold mt-1 line-clamp-2'>{title}</h3>
         </div>
         <div className='flex items-center justify-between text-xs text-neutral-200'>
           <span className='inline-flex items-center gap-1.5'>
@@ -120,40 +114,31 @@ export default function HomeMobile() {
   });
 
   return (
-    <main className='min-h-screen bg-[#070707] text-white px-4 pt-24 pb-28'>
-      <div className='mx-auto max-w-lg flex flex-col gap-7'>
-        <section className='rounded-[2rem] border border-white/10 bg-gradient-to-b from-neutral-900 to-black p-5'>
-          <div className='flex items-start justify-between'>
-            <div>
-              <p className='text-sm text-neutral-400'>Xin chào, Trekker</p>
-              <h1 className='text-4xl font-black tracking-tight mt-1'>
-                Let&apos;s trek
-              </h1>
-            </div>
-            <button
-              aria-label='Thông báo'
-              className='h-10 w-10 rounded-full border border-white/15 bg-white/5 text-neutral-300 flex items-center justify-center'
-            >
-              <Bell size={18} />
-            </button>
-          </div>
+    <main className='relative min-h-screen overflow-hidden bg-[#070707] text-white px-4 pt-24 pb-28 text-[11px]'>
+      <div className='pointer-events-none absolute inset-0'>
+        <div className='absolute -top-24 -left-20 h-64 w-64 rounded-full bg-[#d00600]/16 blur-3xl' />
+        <div className='absolute top-1/3 -right-20 h-72 w-72 rounded-full bg-[#a00303]/12 blur-[120px]' />
+        <div className='absolute bottom-[-140px] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#d00600]/10 blur-3xl' />
+      </div>
 
-          <div className='mt-5 h-12 rounded-2xl border border-white/10 bg-white/5 px-4 flex items-center gap-2'>
+      <div className='relative z-10 mx-auto max-w-lg flex flex-col gap-7'>
+        <section>
+          <div className='h-11 rounded-2xl border border-white/10 bg-white/5 px-4 flex items-center gap-2'>
             <Search size={16} className='text-neutral-500' />
             <input
               type='text'
               placeholder='Tìm kiếm tour hoặc địa điểm...'
-              className='w-full bg-transparent border-none outline-none text-sm text-white placeholder:text-neutral-500'
+              className='w-full bg-transparent border-none outline-none text-[11px] text-white placeholder:text-neutral-500'
             />
           </div>
         </section>
 
         <section className='flex flex-col gap-3'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-2xl font-bold'>Cung trekking hot</h2>
+            <h2 className='text-xl font-bold'>Cung trekking hot</h2>
             <button
               onClick={() => router.push('/tours?mode=location')}
-              className='text-sm inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
+              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
             >
               Xem tất cả <ChevronRight size={15} />
             </button>
@@ -169,7 +154,9 @@ export default function HomeMobile() {
                   name={location.name}
                   elevation={location.elevation_m}
                   imageUrl={location.full_image_url}
-                  onClick={() => router.push('/tours?mode=location')}
+                  onClick={() =>
+                    router.push(`/locations?name=${slugify(location.name)}`)
+                  }
                 />
               ))}
               {!locations.length && (
@@ -181,10 +168,10 @@ export default function HomeMobile() {
 
         <section className='flex flex-col gap-3'>
           <div className='flex items-center justify-between'>
-            <h2 className='text-2xl font-bold'>Tours sắp diễn ra</h2>
+            <h2 className='text-xl font-bold'>Tours sắp diễn ra</h2>
             <button
               onClick={() => router.push('/tours?mode=tour')}
-              className='text-sm inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
+              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
             >
               Xem thêm <ChevronRight size={15} />
             </button>
@@ -217,13 +204,13 @@ export default function HomeMobile() {
 
         <button
           onClick={() => router.push('/tours')}
-          className='w-full rounded-2xl bg-[#d00600] text-white font-semibold py-3.5 inline-flex items-center justify-center gap-2 hover:bg-[#ab0500] transition-colors'
+          className='w-full rounded-2xl bg-[#d00600] text-white text-sm font-semibold py-3.5 inline-flex items-center justify-center gap-2 hover:bg-[#ab0500] transition-colors'
         >
           <Tent size={18} />
           Khám phá tất cả tour trekking
         </button>
 
-        <p className='text-xs text-neutral-500 text-center'>
+        <p className='text-[10px] text-neutral-500 text-center'>
           Hải Thích Đi • Trekking, Kết nối, Thiện nguyện
         </p>
       </div>

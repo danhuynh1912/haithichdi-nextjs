@@ -109,10 +109,10 @@ export default function MyBookingsClient() {
         <section className='rounded-[2rem] border border-white/15 bg-black/60 backdrop-blur-xl p-5 md:p-8 flex flex-col gap-6'>
           <div className='flex flex-col lg:flex-row gap-4 lg:items-end lg:justify-between'>
             <div className='flex flex-col gap-3'>
-              <p className='text-xs uppercase tracking-[0.3em] text-[#d00600] font-semibold'>
+              <p className='text-xs uppercase tracking-[0.14em] md:tracking-[0.3em] text-[#d00600] font-semibold'>
                 My Bookings
               </p>
-              <h1 className='text-3xl md:text-5xl font-black tracking-tight leading-tight'>
+              <h1 className='text-xl md:text-5xl font-black tracking-tight leading-tight'>
                 Quản lý tour bạn đã đặt
               </h1>
               <p className='text-neutral-300 text-sm md:text-base max-w-2xl'>
@@ -164,7 +164,7 @@ export default function MyBookingsClient() {
               <div className='h-16 w-16 rounded-full border border-[#d00600]/40 bg-[#d00600]/10 text-[#ffb0ac] flex items-center justify-center'>
                 <TicketCheck size={28} />
               </div>
-              <h2 className='text-2xl font-black tracking-tight'>
+              <h2 className='text-xl md:text-2xl font-black tracking-tight'>
                 {isMobile
                   ? 'Bạn chưa đặt tour nào'
                   : 'Chưa có booking nào trên thiết bị này'}

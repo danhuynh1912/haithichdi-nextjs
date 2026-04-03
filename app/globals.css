@@ -89,6 +89,12 @@ body {
   font-family: var(--font-main), system-ui, sans-serif;
 }
 
+@media (max-width: 767px) {
+  body {
+    font-size: 11px;
+  }
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -131,5 +137,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
-
 

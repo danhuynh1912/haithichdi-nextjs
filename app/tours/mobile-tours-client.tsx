@@ -29,13 +29,13 @@ export default function MobileToursClient() {
   };
 
   return (
-    <main className='min-h-screen bg-black text-white pt-24 pb-24 px-4'>
+    <main className='min-h-screen bg-black text-white text-[11px] pt-24 pb-24 px-4'>
       <div className='mx-auto max-w-lg flex flex-col gap-4'>
         <div className='rounded-2xl border border-white/10 bg-white/[0.03] p-1.5 grid grid-cols-2 gap-1.5'>
           <button
             onClick={() => switchMode('location')}
             className={cn(
-              'rounded-xl py-2.5 text-sm font-semibold transition-colors',
+              'rounded-xl py-2.5 text-xs font-semibold transition-colors',
               mode === 'location'
                 ? 'bg-[#d00600] text-white'
                 : 'text-neutral-300 hover:bg-white/5',
@@ -46,7 +46,7 @@ export default function MobileToursClient() {
           <button
             onClick={() => switchMode('tour')}
             className={cn(
-              'rounded-xl py-2.5 text-sm font-semibold transition-colors',
+              'rounded-xl py-2.5 text-xs font-semibold transition-colors',
               mode === 'tour'
                 ? 'bg-[#d00600] text-white'
                 : 'text-neutral-300 hover:bg-white/5',

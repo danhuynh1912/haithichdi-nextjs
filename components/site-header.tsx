@@ -9,8 +9,10 @@ import {
   hasStoredBookingIds,
   subscribeBookingIdsChanged,
 } from '@/lib/services/booking-storage';
+import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 
 export default function SiteHeader() {
+  const isMobile = useIsMobile();
   const [scrolled, setScrolled] = useState(false);
   const [showBookedToursItem, setShowBookedToursItem] = useState(false);
 
@@ -53,32 +55,39 @@ export default function SiteHeader() {
           className='h-11 md:h-16 w-auto hover:opacity-85 transition-opacity'
         />
       </Link>
-      <nav className='hidden md:flex gap-8 lg:gap-12 text-sm lg:text-base'>
-        <Link href='/' className='hover:text-red-500 transition-colors'>
-          Trang chủ
-        </Link>
-        <Link href='/locations' className='hover:text-red-500 transition-colors'>
-          Địa điểm
-        </Link>
-        <Link href='/tours' className='hover:text-red-500 transition-colors'>
-          Tours
-        </Link>
-        <Link href='/about' className='hover:text-red-500 transition-colors'>
-          Về chúng tôi
-        </Link>
-        <Link href='/contact' className='hover:text-red-500 transition-colors'>
-          Liên hệ
-        </Link>
-        {showBookedToursItem && (
-          <Link
-            href='/my-bookings'
-            className='hover:text-[#43d88a] transition-colors inline-flex items-center gap-2 whitespace-nowrap'
-          >
-            <TicketCheck size={16} />
-            Tours bạn đã đặt
-          </Link>
+      <div className='flex items-center gap-4'>
+        {isMobile && (
+          <p className='text-[11px] leading-tight text-right text-neutral-300 md:hidden'>
+            Xin chào, <span className='font-semibold text-white'>Trekker</span>
+          </p>
         )}
-      </nav>
+        <nav className='hidden md:flex gap-8 lg:gap-12 text-sm lg:text-base'>
+          <Link href='/' className='hover:text-red-500 transition-colors'>
+            Trang chủ
+          </Link>
+          <Link href='/locations' className='hover:text-red-500 transition-colors'>
+            Địa điểm
+          </Link>
+          <Link href='/tours' className='hover:text-red-500 transition-colors'>
+            Tours
+          </Link>
+          <Link href='/about' className='hover:text-red-500 transition-colors'>
+            Về chúng tôi
+          </Link>
+          <Link href='/contact' className='hover:text-red-500 transition-colors'>
+            Liên hệ
+          </Link>
+          {showBookedToursItem && (
+            <Link
+              href='/my-bookings'
+              className='hover:text-[#43d88a] transition-colors inline-flex items-center gap-2 whitespace-nowrap'
+            >
+              <TicketCheck size={16} />
+              Tours bạn đã đặt
+            </Link>
+          )}
+        </nav>
+      </div>
     </header>
   );
 }
