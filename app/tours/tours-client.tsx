@@ -13,7 +13,11 @@ import { MotionConfig, motion } from 'motion/react';
 import { ANIMATION_EASE } from '@/lib/constants';
 import { TourListItem } from './types';
 
-export default function ToursClient() {
+export default function ToursClient({
+  layout = 'standalone',
+}: {
+  layout?: 'standalone' | 'embedded';
+}) {
   const [selectedLocations, setSelectedLocations] = useState<number[]>([]);
   const [search, setSearch] = useState('');
   const [sortUpcoming, setSortUpcoming] = useState(true);
@@ -42,7 +46,11 @@ export default function ToursClient() {
   const content = useMemo(() => renderToursList(tours), [tours]);
 
   return (
-    <main className='min-h-screen bg-black text-white pt-24 pb-16 px-4 md:px-8'>
+    <main
+      className={`min-h-screen bg-black text-white px-4 md:px-8 ${
+        layout === 'embedded' ? 'pt-4 pb-6' : 'pt-24 pb-16'
+      }`}
+    >
       <div className='max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6'>
         <FilterSidebar
           locations={locations}

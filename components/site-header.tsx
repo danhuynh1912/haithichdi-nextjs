@@ -50,10 +50,10 @@ export default function SiteHeader() {
           width={2366}
           height={2366}
           priority
-          className='h-14 md:h-16 w-auto hover:opacity-85 transition-opacity'
+          className='h-11 md:h-16 w-auto hover:opacity-85 transition-opacity'
         />
       </Link>
-      <nav className='flex gap-8 lg:gap-12 text-sm lg:text-base'>
+      <nav className='hidden md:flex gap-8 lg:gap-12 text-sm lg:text-base'>
         <Link href='/' className='hover:text-red-500 transition-colors'>
           Trang chủ
         </Link>

@@ -11,7 +11,11 @@ import { motion } from 'motion/react';
 import { ANIMATION_EASE } from '@/lib/constants';
 import { slugify } from '@/lib/utils';
 
-export default function LocationsClient() {
+export default function LocationsClient({
+  layout = 'standalone',
+}: {
+  layout?: 'standalone' | 'embedded';
+}) {
   const [locations, setLocations] = useState<Location[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -97,7 +101,13 @@ export default function LocationsClient() {
   }
 
   return (
-    <main className='relative h-[calc(100vh)] w-full flex flex-col items-center justify-center pt-24 overflow-hidden'>
+    <main
+      className={`relative w-full flex flex-col items-center justify-center overflow-hidden ${
+        layout === 'embedded'
+          ? 'min-h-[calc(100dvh-15rem)] pt-6'
+          : 'h-[calc(100vh)] pt-24'
+      }`}
+    >
       {/* Background with blur transition */}
       <BackgroundBlur imageUrl={locations[activeIndex]?.full_image_url} />
 

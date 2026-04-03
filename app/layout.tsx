@@ -3,6 +3,7 @@ import './globals.css';
 import Providers from './providers';
 import { createRootMetadata } from '@/lib/seo';
 import SiteHeader from '@/components/site-header';
+import MobileBottomBar from '@/features/mobile/mobile-bottom-bar';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin', 'vietnamese'],
@@ -23,7 +24,8 @@ export default function RootLayout({
         {/* <PageTransition /> */}
         <SiteHeader />
         <Providers>
-          <div className=''>{children}</div>
+          <div className='pb-20 md:pb-0'>{children}</div>
+          <MobileBottomBar />
         </Providers>
       </body>
     </html>

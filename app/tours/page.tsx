@@ -1,5 +1,5 @@
 import { createMetadata } from '@/lib/seo';
-import ToursClient from './tours-client';
+import ToursRouteClient from './tours-route-client';
 
 export const metadata = createMetadata({
   title: 'Tours',
@@ -8,5 +8,5 @@ export const metadata = createMetadata({
 });
 
 export default function Page() {
-  return <ToursClient />;
+  return <ToursRouteClient />;
 }

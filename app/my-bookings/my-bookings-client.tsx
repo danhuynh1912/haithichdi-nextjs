@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import {
   Calendar,
   ChevronRight,
+  CircleAlert,
   LayoutGrid,
   List,
   MapPin,
@@ -24,6 +25,7 @@ import {
 import { formatDateDdMm } from '@/lib/utils';
 import BookingDetailModal from './components/booking-detail-modal';
 import { BookingFlowHeader } from '../tour-booking/components/booking-flow-header';
+import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 
 type ViewMode = 'card' | 'list';
 
@@ -46,6 +48,7 @@ function formatCreatedAt(value: string) {
 
 export default function MyBookingsClient() {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(
     null,
@@ -89,7 +92,7 @@ export default function MyBookingsClient() {
   const hasBookings = bookingIds.length > 0;
 
   return (
-    <main className='relative min-h-screen overflow-hidden text-white pt-24 px-4 md:px-8 pb-12'>
+    <main className='relative min-h-screen overflow-hidden text-white pt-24 px-4 md:px-8 pb-24 md:pb-12'>
       <BackgroundBlur imageUrl={heroBackground} />
       <div className='pointer-events-none absolute inset-0 -z-10'>
         <div className='absolute -top-24 -right-20 h-[300px] w-[300px] rounded-full bg-[#d00600]/18 blur-3xl' />
@@ -146,23 +149,37 @@ export default function MyBookingsClient() {
             )}
           </div>
 
+          {isMobile && (
+            <div className='rounded-2xl border border-amber-400/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-100 flex items-start gap-2.5'>
+              <CircleAlert size={16} className='mt-0.5 shrink-0' />
+              <p>
+                Thông tin ở đây đang được lưu tạm thời, hãy đăng nhập để luôn
+                theo dõi lịch sử đặt tours.
+              </p>
+            </div>
+          )}
+
           {isStorageReady && !hasBookings && (
             <div className='rounded-3xl border border-white/10 bg-white/[0.03] p-8 md:p-10 text-center flex flex-col items-center gap-4'>
               <div className='h-16 w-16 rounded-full border border-[#d00600]/40 bg-[#d00600]/10 text-[#ffb0ac] flex items-center justify-center'>
                 <TicketCheck size={28} />
               </div>
               <h2 className='text-2xl font-black tracking-tight'>
-                Chưa có booking nào trên thiết bị này
+                {isMobile
+                  ? 'Bạn chưa đặt tour nào'
+                  : 'Chưa có booking nào trên thiết bị này'}
               </h2>
-              <p className='text-sm text-neutral-400 max-w-xl'>
-                Khi bạn đặt tour thành công, mã booking sẽ được lưu tự động để
-                theo dõi trạng thái ngay tại đây.
-              </p>
+              {!isMobile && (
+                <p className='text-sm text-neutral-400 max-w-xl'>
+                  Khi bạn đặt tour thành công, mã booking sẽ được lưu tự động để
+                  theo dõi trạng thái ngay tại đây.
+                </p>
+              )}
               <Link
                 href='/tours'
                 className='inline-flex items-center gap-2 rounded-xl bg-[#d00600] px-4 py-2.5 text-white font-semibold hover:bg-[#a90500] transition-colors'
               >
-                Đi đến danh sách tours
+                {isMobile ? 'Hãy đặt ngay' : 'Đi đến danh sách tours'}
                 <ChevronRight size={16} />
               </Link>
             </div>
