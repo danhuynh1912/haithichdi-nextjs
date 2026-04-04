@@ -35,10 +35,10 @@ export default function MobileToursClient() {
           <button
             onClick={() => switchMode('location')}
             className={cn(
-              'rounded-xl py-2.5 text-xs font-semibold transition-colors',
+              'tap-bg-only rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150',
               mode === 'location'
-                ? 'bg-[#d00600] text-white'
-                : 'text-neutral-300 hover:bg-white/5',
+                ? 'bg-[#d00600] text-white active:bg-[#a90500]'
+                : 'text-neutral-300 hover:bg-white/5 active:bg-white/12',
             )}
           >
             Tìm theo cung
@@ -46,10 +46,10 @@ export default function MobileToursClient() {
           <button
             onClick={() => switchMode('tour')}
             className={cn(
-              'rounded-xl py-2.5 text-xs font-semibold transition-colors',
+              'tap-bg-only rounded-xl py-2.5 text-xs font-semibold transition-colors duration-150',
               mode === 'tour'
-                ? 'bg-[#d00600] text-white'
-                : 'text-neutral-300 hover:bg-white/5',
+                ? 'bg-[#d00600] text-white active:bg-[#a90500]'
+                : 'text-neutral-300 hover:bg-white/5 active:bg-white/12',
             )}
           >
             Tìm theo tour

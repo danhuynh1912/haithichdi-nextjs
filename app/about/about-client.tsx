@@ -270,10 +270,18 @@ function LeadersSection({
         ) : (
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5'>
             {leaders.map((leader, idx) => (
-              <motion.button
+              <motion.div
                 key={leader.id ?? idx}
                 onClick={() => onSelect(leader)}
-                className='group text-left rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-black/20 to-black/60 p-5 hover:border-red-400/50 hover:shadow-[0_20px_60px_-35px_rgba(255,80,80,0.6)] transition-all duration-300'
+                role='button'
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    onSelect(leader);
+                  }
+                }}
+                className='group text-left rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-black/20 to-black/60 p-5 md:cursor-pointer hover:border-red-400/50 hover:shadow-[0_20px_60px_-35px_rgba(255,80,80,0.6)] transition-all duration-300'
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -311,7 +319,17 @@ function LeadersSection({
                     </span>
                   ))}
                 </div>
-              </motion.button>
+                <button
+                  type='button'
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onSelect(leader);
+                  }}
+                  className='mt-4 md:hidden inline-flex items-center gap-2 rounded-xl border border-red-500/35 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-200 active:scale-[0.98] transition-transform'
+                >
+                  Chi tiết
+                </button>
+              </motion.div>
             ))}
           </div>
         )}

@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { FileText } from 'lucide-react';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import {
-  buildGoogleEmbeddedViewerUrl,
   buildGoogleViewerUrl,
   buildInlinePdfPreviewSrc,
   cn,
@@ -42,10 +41,7 @@ export default function PdfPreviewCard({
     () => (pdfUrl ? buildGoogleViewerUrl(pdfUrl) : null),
     [pdfUrl],
   );
-  const mobileViewerUrl = useMemo(
-    () => (pdfUrl ? buildGoogleEmbeddedViewerUrl(pdfUrl) : null),
-    [pdfUrl],
-  );
+  const mobileViewerUrl = useMemo(() => (pdfUrl ? pdfUrl : null), [pdfUrl]);
   const thumbSrc = thumbnailUrl && thumbnailUrl.trim() ? thumbnailUrl : null;
   const thumbIsRemote = Boolean(thumbSrc?.startsWith('http'));
 
@@ -122,11 +118,23 @@ export default function PdfPreviewCard({
         contentClassName='bg-black text-white'
       >
         {mobileViewerUrl && (
-          <iframe
-            src={mobileViewerUrl}
-            title={`${title} - Chi tiết`}
-            className='w-full h-full border-0'
-          />
+          <div className='relative h-full w-full'>
+            <iframe
+              src={mobileViewerUrl}
+              title={`${title} - Chi tiết`}
+              className='w-full h-full border-0'
+            />
+            {viewerUrl && (
+              <a
+                href={viewerUrl}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='absolute left-3 bottom-3 rounded-full border border-white/20 bg-black/70 px-3 py-1.5 text-[11px] text-white'
+              >
+                Mở tab mới nếu chưa hiển thị
+              </a>
+            )}
+          </div>
         )}
       </FullscreenModalShell>
     </>

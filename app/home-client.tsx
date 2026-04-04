@@ -1,15 +1,18 @@
 'use client';
 
+import { Suspense, lazy } from 'react';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
-import HomeDesktop from './home/home-desktop';
-import HomeMobile from './home/home-mobile';
+import RouteSuspenseFallback from '@/components/route-suspense-fallback';
+
+const HomeDesktop = lazy(() => import('./home/home-desktop'));
+const HomeMobile = lazy(() => import('./home/home-mobile'));
 
 export default function HomeClient() {
   const isMobile = useIsMobile();
 
-  if (isMobile) {
-    return <HomeMobile />;
-  }
-
-  return <HomeDesktop />;
+  return (
+    <Suspense fallback={<RouteSuspenseFallback />}>
+      {isMobile ? <HomeMobile /> : <HomeDesktop />}
+    </Suspense>
+  );
 }

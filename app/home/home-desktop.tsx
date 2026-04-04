@@ -2,12 +2,15 @@
 
 import Image from 'next/image';
 import { motion } from 'motion/react';
+import { useRouter } from 'next/navigation';
 import { MoveRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HotTours from '@/app/components/hotTours/hot-tours';
 import { ANIMATION_EASE } from '@/lib/constants';
 
 export default function HomeDesktop() {
+  const router = useRouter();
+
   return (
     <main>
       <section className='text-white absolute w-screen h-screen bg-black/50 bg-cover bg-[center_70%]'>
@@ -73,6 +76,7 @@ export default function HomeDesktop() {
               <Button
                 size='xl'
                 className='mt-6 text-lg has-[>svg]:px-16 has-[>svg]:py-8 shadow-lg'
+                onClick={() => router.push('/tours')}
               >
                 Booking
                 <MoveRight className='ml-2' />

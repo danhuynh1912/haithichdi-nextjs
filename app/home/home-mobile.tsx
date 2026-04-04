@@ -3,28 +3,31 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { memo, useCallback } from 'react';
 import { Calendar, ChevronRight, Search, Tent } from 'lucide-react';
 import { locationService } from '@/lib/services/location';
 import { tourService } from '@/lib/services/tour';
 import { formatDateDdMm, slugify } from '@/lib/utils';
+import HomeMobileSectionSkeleton from './components/home-mobile-section-skeleton';
 
-function HotLocationCard({
+const HotLocationCard = memo(function HotLocationCard({
   name,
   imageUrl,
   elevation,
-  onClick,
+  onCardClick,
 }: {
   name: string;
   imageUrl: string | null;
   elevation: number;
-  onClick: () => void;
+  onCardClick: (name: string) => void;
 }) {
   const src = imageUrl || '/images/tachinhu1.jpg';
   const isRemote = src.startsWith('http');
+  const handleClick = useCallback(() => onCardClick(name), [onCardClick, name]);
 
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className='relative h-44 w-40 shrink-0 overflow-hidden rounded-3xl border border-white/10 text-left'
     >
       <Image
@@ -41,34 +44,37 @@ function HotLocationCard({
       </div>
     </button>
   );
-}
+});
 
-function HotTourFeatureCard({
+const HotTourFeatureCard = memo(function HotTourFeatureCard({
+  tourId,
   title,
   imageUrl,
   locationName,
   startDate,
   endDate,
   slotsLeft,
-  onClick,
+  onCardClick,
 }: {
+  tourId: number;
   title: string;
   imageUrl: string | null;
   locationName: string;
   startDate: string | null;
   endDate: string | null;
   slotsLeft: number;
-  onClick: () => void;
+  onCardClick: (tourId: number) => void;
 }) {
   const src = imageUrl || '/images/haithichdi1.jpg';
   const isRemote = src.startsWith('http');
+  const handleClick = useCallback(() => onCardClick(tourId), [onCardClick, tourId]);
   const dateLabel = startDate
     ? `${formatDateDdMm(startDate)}${endDate ? ` - ${formatDateDdMm(endDate)}` : ''}`
     : 'Đang cập nhật';
 
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className='relative w-full h-40 overflow-hidden rounded-3xl border border-white/10 text-left'
     >
       <Image
@@ -98,20 +104,34 @@ function HotTourFeatureCard({
       </div>
     </button>
   );
-}
+});
 
 export default function HomeMobile() {
   const router = useRouter();
 
-  const { data: locations = [], isLoading: locationsLoading } = useQuery({
+  const { data: locations = [], isPending: locationsPending } = useQuery({
     queryKey: ['mobile-home-locations'],
     queryFn: locationService.getLocations,
   });
 
-  const { data: hotTours = [], isLoading: toursLoading } = useQuery({
+  const { data: hotTours = [], isPending: toursPending } = useQuery({
     queryKey: ['mobile-home-hot-tours'],
     queryFn: tourService.getHotTours,
   });
+
+  const openLocation = useCallback(
+    (locationName: string) => {
+      router.push(`/tours?mode=location&name=${slugify(locationName)}`);
+    },
+    [router],
+  );
+
+  const openTour = useCallback(
+    (tourId: number) => {
+      router.push(`/tour-booking/${tourId}`);
+    },
+    [router],
+  );
 
   return (
     <main className='relative min-h-screen overflow-hidden bg-[#070707] text-white px-4 pt-24 pb-28 text-[11px]'>
@@ -128,7 +148,7 @@ export default function HomeMobile() {
             <input
               type='text'
               placeholder='Tìm kiếm tour hoặc địa điểm...'
-              className='w-full bg-transparent border-none outline-none text-[11px] text-white placeholder:text-neutral-500'
+              className='w-full bg-transparent border-none outline-none text-base md:text-sm text-white placeholder:text-neutral-500'
             />
           </div>
         </section>
@@ -138,14 +158,14 @@ export default function HomeMobile() {
             <h2 className='text-xl font-bold'>Cung trekking hot</h2>
             <button
               onClick={() => router.push('/tours?mode=location')}
-              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
+              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors active:text-red-100'
             >
               Xem tất cả <ChevronRight size={15} />
             </button>
           </div>
 
-          {locationsLoading ? (
-            <div className='text-sm text-neutral-400'>Đang tải địa điểm...</div>
+          {locationsPending ? (
+            <HomeMobileSectionSkeleton variant='location' count={4} />
           ) : (
             <div className='flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'>
               {locations.map((location) => (
@@ -154,11 +174,7 @@ export default function HomeMobile() {
                   name={location.name}
                   elevation={location.elevation_m}
                   imageUrl={location.full_image_url}
-                  onClick={() =>
-                    router.push(
-                      `/tours?mode=location&name=${slugify(location.name)}`,
-                    )
-                  }
+                  onCardClick={openLocation}
                 />
               ))}
               {!locations.length && (
@@ -173,26 +189,27 @@ export default function HomeMobile() {
             <h2 className='text-xl font-bold'>Tours sắp diễn ra</h2>
             <button
               onClick={() => router.push('/tours?mode=tour')}
-              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors'
+              className='text-xs inline-flex items-center gap-1.5 text-red-300 hover:text-red-200 transition-colors active:text-red-100'
             >
               Xem thêm <ChevronRight size={15} />
             </button>
           </div>
 
-          {toursLoading ? (
-            <div className='text-sm text-neutral-400'>Đang tải hot tours...</div>
+          {toursPending ? (
+            <HomeMobileSectionSkeleton variant='tour' count={3} />
           ) : (
             <div className='flex flex-col gap-3'>
               {hotTours.map((tour) => (
                 <HotTourFeatureCard
                   key={tour.id}
+                  tourId={tour.id}
                   title={tour.title}
                   imageUrl={tour.image_url}
                   locationName={tour.location.name}
                   startDate={tour.start_date}
                   endDate={tour.end_date}
                   slotsLeft={tour.slots_left}
-                  onClick={() => router.push(`/tour-booking/${tour.id}`)}
+                  onCardClick={openTour}
                 />
               ))}
               {!hotTours.length && (

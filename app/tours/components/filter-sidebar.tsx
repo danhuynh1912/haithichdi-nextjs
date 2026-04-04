@@ -54,17 +54,29 @@ function FilterSidebarBase({
         <h3 className='text-sm font-bold uppercase tracking-[0.18em] text-white'>
           Sắp xếp
         </h3>
-        <button
-          onClick={onToggleSort}
-          className={cn(
-            'cursor-pointer w-full px-3 py-2 rounded-2xl border text-sm transition-colors',
-            sortUpcoming
-              ? 'border-red-500/50 bg-red-500/10 text-red-200'
-              : 'border-white/10 bg-white/5 text-neutral-200 hover:border-white/30',
-          )}
-        >
-          Tours sắp diễn ra
-        </button>
+        <div className='w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 flex items-center justify-between gap-3'>
+          <span className='text-sm text-neutral-200'>Tours sắp diễn ra</span>
+          <button
+            type='button'
+            role='switch'
+            aria-checked={sortUpcoming}
+            aria-label='Bật tắt bộ lọc tours sắp diễn ra'
+            onClick={onToggleSort}
+            className={cn(
+              'tap-bg-only relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border transition-colors duration-200 ease-out',
+              sortUpcoming
+                ? 'border-red-400/70 bg-red-600/80'
+                : 'border-white/25 bg-white/10',
+            )}
+          >
+            <span
+              className={cn(
+                'pointer-events-none absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 ease-out',
+                sortUpcoming ? 'translate-x-5' : 'translate-x-0.5',
+              )}
+            />
+          </button>
+        </div>
       </div>
     </aside>
   );

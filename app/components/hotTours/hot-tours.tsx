@@ -41,7 +41,7 @@ const HotTours = ({ className }: { className: string }) => {
         variants={list}
         className='flex flex-col gap-4 bg-white/10 backdrop-blur-sm rounded-3xl py-8 px-12 shadow-sm'
       >
-        <h2 className='text-2xl font-extrabold'>Hot Tours</h2>
+        <h2 className='text-2xl font-extrabold'>Tours sắp diễn ra</h2>
         {isLoading ? <p className='text-sm text-white/70'>Loading...</p> : null}
         {isError ? (
           <p className='text-sm text-white/70'>Failed to load hot tours.</p>

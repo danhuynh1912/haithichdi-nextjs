@@ -55,10 +55,10 @@ export default function MobileBottomBar() {
               href={href}
               aria-label={label}
               className={cn(
-                'h-12 rounded-2xl flex items-center justify-center transition-colors',
+                'h-12 rounded-2xl flex items-center justify-center transition-colors duration-150',
                 active
-                  ? 'bg-[#d00600]/18 text-[#ffd0ce]'
-                  : 'text-neutral-400 hover:text-white hover:bg-white/5',
+                  ? 'bg-[#d00600]/18 text-[#ffd0ce] active:bg-[#d00600]/30'
+                  : 'text-neutral-400 hover:text-white hover:bg-white/5 active:bg-white/12',
               )}
             >
               <Icon size={20} />

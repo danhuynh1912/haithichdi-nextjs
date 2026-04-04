@@ -22,7 +22,7 @@ export function TourSearchBar({ value, onChange, className }: TourSearchBarProps
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder='Tìm tour theo tên...'
-        className='bg-transparent flex-1 outline-none text-sm placeholder:text-neutral-500'
+        className='bg-transparent flex-1 outline-none text-base md:text-sm placeholder:text-neutral-500'
       />
     </div>
   );
