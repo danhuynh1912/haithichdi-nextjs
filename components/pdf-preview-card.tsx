@@ -1,9 +1,11 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import Image from 'next/image';
 import { FileText } from 'lucide-react';
 import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 import {
+  buildGoogleEmbeddedViewerUrl,
   buildGoogleViewerUrl,
   buildInlinePdfPreviewSrc,
   cn,
@@ -16,6 +18,8 @@ interface PdfPreviewCardProps {
   className?: string;
   frameClassName?: string;
   emptyMessage?: string;
+  thumbnailUrl?: string | null;
+  mobileCtaLabel?: string;
 }
 
 export default function PdfPreviewCard({
@@ -24,6 +28,8 @@ export default function PdfPreviewCard({
   className,
   frameClassName,
   emptyMessage = 'Chưa có file thông tin cho mục này.',
+  thumbnailUrl,
+  mobileCtaLabel = 'Xem chi tiết thông tin',
 }: PdfPreviewCardProps) {
   const isMobile = useIsMobile();
   const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -36,6 +42,12 @@ export default function PdfPreviewCard({
     () => (pdfUrl ? buildGoogleViewerUrl(pdfUrl) : null),
     [pdfUrl],
   );
+  const mobileViewerUrl = useMemo(
+    () => (pdfUrl ? buildGoogleEmbeddedViewerUrl(pdfUrl) : null),
+    [pdfUrl],
+  );
+  const thumbSrc = thumbnailUrl && thumbnailUrl.trim() ? thumbnailUrl : null;
+  const thumbIsRemote = Boolean(thumbSrc?.startsWith('http'));
 
   return (
     <>
@@ -47,13 +59,25 @@ export default function PdfPreviewCard({
       >
         {inlinePdfSrc ? (
           isMobile ? (
-            <div className='flex-1 min-h-[220px] px-6 py-8 flex flex-col items-center justify-center gap-3 text-center text-neutral-400'>
-              <FileText className='text-[#d00600]' size={32} />
-              <p className='text-sm'>
-                Bản xem nhanh đã được tối ưu cho điện thoại. Nhấn bên dưới để xem
-                đầy đủ.
-              </p>
-            </div>
+            thumbSrc ? (
+              <div className='relative w-full aspect-[16/9] bg-black'>
+                <Image
+                  src={thumbSrc}
+                  alt={`${title} thumbnail`}
+                  fill
+                  unoptimized={thumbIsRemote}
+                  className='object-cover'
+                />
+              </div>
+            ) : (
+              <div className='flex-1 min-h-[220px] px-6 py-8 flex flex-col items-center justify-center gap-3 text-center text-neutral-400'>
+                <FileText className='text-[#d00600]' size={32} />
+                <p className='text-sm'>
+                  Bản xem nhanh đã được tối ưu cho điện thoại. Nhấn bên dưới để xem
+                  đầy đủ.
+                </p>
+              </div>
+            )
           ) : (
             <iframe
               src={inlinePdfSrc}
@@ -75,7 +99,7 @@ export default function PdfPreviewCard({
                 onClick={() => setIsViewerOpen(true)}
                 className='inline-flex items-center gap-1.5 text-xs text-neutral-300 hover:text-white transition-colors'
               >
-                Xem chi tiết thông tin
+                {mobileCtaLabel}
               </button>
             ) : (
               <a
@@ -92,14 +116,14 @@ export default function PdfPreviewCard({
       </div>
 
       <FullscreenModalShell
-        open={Boolean(isMobile && isViewerOpen && viewerUrl)}
+        open={Boolean(isMobile && isViewerOpen && mobileViewerUrl)}
         onClose={() => setIsViewerOpen(false)}
         closeAriaLabel='Đóng chi tiết thông tin'
         contentClassName='bg-black text-white'
       >
-        {viewerUrl && (
+        {mobileViewerUrl && (
           <iframe
-            src={viewerUrl}
+            src={mobileViewerUrl}
             title={`${title} - Chi tiết`}
             className='w-full h-full border-0'
           />

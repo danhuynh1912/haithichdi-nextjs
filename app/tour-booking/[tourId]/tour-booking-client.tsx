@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BookingFlowHeader } from '../components/booking-flow-header';
 import BackgroundBlur from '@/app/locations/components/background-blur';
 import PdfPreviewCard from '@/components/pdf-preview-card';
+import { useIsMobile } from '@/lib/hooks/use-is-mobile';
 
 type BookingFormState =
   | { status: 'idle'; message?: string; redirectTo?: undefined; bookingId?: undefined }
@@ -48,6 +49,7 @@ export default function TourBookingClient({
   tourIdParam: string;
 }) {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const tourId = Number(tourIdParam);
 
   const {
@@ -117,16 +119,34 @@ export default function TourBookingClient({
           </div>
         </header>
 
-        <div className='flex flex-col md:flex-row gap-6'>
-          <PdfPreviewCard
-            pdfUrl={pdfUrl}
-            title={`Quotation - ${tour.location.name}`}
-            className='w-full md:w-1/2 md:min-h-[60vh]'
-            frameClassName='w-full h-full min-h-[60vh]'
-            emptyMessage='Chưa có file quotation cho địa điểm này.'
-          />
-          <BookingForm tourId={tourId} locationName={tour.location.name} />
-        </div>
+        {isMobile ? (
+          <div className='w-full rounded-3xl border border-white/10 bg-neutral-900 overflow-hidden shadow-2xl'>
+            <PdfPreviewCard
+              pdfUrl={pdfUrl}
+              title={`Quotation - ${tour.location.name}`}
+              className='w-full border-0 rounded-none shadow-none'
+              emptyMessage='Chưa có file quotation cho địa điểm này.'
+              thumbnailUrl={tour.location.full_image_url}
+              mobileCtaLabel='Xem lịch trình và báo giá'
+            />
+            <BookingForm
+              tourId={tourId}
+              locationName={tour.location.name}
+              embeddedMobile
+            />
+          </div>
+        ) : (
+          <div className='flex flex-col md:flex-row gap-6'>
+            <PdfPreviewCard
+              pdfUrl={pdfUrl}
+              title={`Quotation - ${tour.location.name}`}
+              className='w-full md:w-1/2 md:min-h-[60vh]'
+              frameClassName='w-full h-full min-h-[60vh]'
+              emptyMessage='Chưa có file quotation cho địa điểm này.'
+            />
+            <BookingForm tourId={tourId} locationName={tour.location.name} />
+          </div>
+        )}
       </div>
     </main>
   );
@@ -135,9 +155,11 @@ export default function TourBookingClient({
 const BookingForm = memo(function BookingForm({
   tourId,
   locationName,
+  embeddedMobile = false,
 }: {
   tourId: number;
   locationName: string;
+  embeddedMobile?: boolean;
 }) {
   const router = useRouter();
   const [formState, formAction] = useActionState<BookingFormState, FormData>(
@@ -202,7 +224,13 @@ const BookingForm = memo(function BookingForm({
   }, [formState, router]);
 
   return (
-    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-5 md:p-8 flex flex-col gap-6'>
+    <div
+      className={`w-full flex flex-col gap-6 ${
+        embeddedMobile
+          ? 'bg-transparent border-0 rounded-none shadow-none p-5'
+          : 'md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-5 md:p-8'
+      }`}
+    >
       <div className='flex flex-col gap-1'>
         <h2 className='text-2xl font-black text-white'>Đăng ký ngay</h2>
         <p className='text-neutral-400 text-sm'>

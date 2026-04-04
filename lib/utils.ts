@@ -32,3 +32,7 @@ export function buildInlinePdfPreviewSrc(pdfUrl: string) {
 export function buildGoogleViewerUrl(pdfUrl: string) {
   return `https://drive.google.com/viewerng/viewer?url=${encodeURIComponent(pdfUrl)}`
 }
+
+export function buildGoogleEmbeddedViewerUrl(pdfUrl: string) {
+  return `https://docs.google.com/gview?embedded=1&url=${encodeURIComponent(pdfUrl)}`
+}

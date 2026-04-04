@@ -113,7 +113,7 @@ export default function MyBookingsClient() {
                 My Bookings
               </p>
               <h1 className='text-xl md:text-5xl font-black tracking-tight leading-tight'>
-                Quản lý tour bạn đã đặt
+                Tour bạn đã đặt
               </h1>
               <p className='text-neutral-300 text-sm md:text-base max-w-2xl'>
                 Theo dõi trạng thái từng booking và mở chi tiết đơn ngay trong
