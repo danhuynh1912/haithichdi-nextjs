@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useActionState, useEffect, useMemo, type ReactNode } from 'react';
+import { memo, useActionState, useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { tourService, TourDetail, BookingPayload } from '@/lib/services/tour';
 import { saveBookingId } from '@/lib/services/booking-storage';
@@ -12,7 +12,6 @@ import {
   Phone,
   Mail,
   User,
-  FileText,
   AlertTriangle,
   ChevronLeft,
   LoaderCircle,
@@ -21,6 +20,7 @@ import { useFormStatus } from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { BookingFlowHeader } from '../components/booking-flow-header';
 import BackgroundBlur from '@/app/locations/components/background-blur';
+import PdfPreviewCard from '@/components/pdf-preview-card';
 
 type BookingFormState =
   | { status: 'idle'; message?: string; redirectTo?: undefined; bookingId?: undefined }
@@ -60,12 +60,7 @@ export default function TourBookingClient({
     enabled: Number.isFinite(tourId),
   });
 
-  const pdfSrc = useMemo(() => {
-    if (!tour?.location?.quotation_file_url) return null;
-    const base = tour.location.quotation_file_url;
-    const suffix = 'toolbar=0&navpanes=0&scrollbar=0';
-    return base.includes('#') ? `${base}&${suffix}` : `${base}#${suffix}`;
-  }, [tour?.location?.quotation_file_url]);
+  const pdfUrl = tour?.location?.quotation_file_url || null;
 
   if (isPending) {
     return (
@@ -123,38 +118,19 @@ export default function TourBookingClient({
         </header>
 
         <div className='flex flex-col md:flex-row gap-6'>
-          <PdfPreview pdfSrc={pdfSrc} locationName={tour.location.name} />
+          <PdfPreviewCard
+            pdfUrl={pdfUrl}
+            title={`Quotation - ${tour.location.name}`}
+            className='w-full md:w-1/2 md:min-h-[60vh]'
+            frameClassName='w-full h-full min-h-[60vh]'
+            emptyMessage='Chưa có file quotation cho địa điểm này.'
+          />
           <BookingForm tourId={tourId} locationName={tour.location.name} />
         </div>
       </div>
     </main>
   );
 }
-
-const PdfPreview = memo(function PdfPreview({
-  pdfSrc,
-  locationName,
-}: {
-  pdfSrc: string | null;
-  locationName: string;
-}) {
-  return (
-    <div className='w-full md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl md:min-h-[60vh]'>
-      {pdfSrc ? (
-        <iframe
-          src={pdfSrc}
-          title={`Quotation - ${locationName}`}
-          className='w-full h-full'
-        />
-      ) : (
-        <div className='w-full h-full flex flex-col items-center justify-center gap-3 text-neutral-400 px-6 text-center'>
-          <FileText className='text-[#d00600]' size={32} />
-          <p>Chưa có file quotation cho địa điểm này.</p>
-        </div>
-      )}
-    </div>
-  );
-});
 
 const BookingForm = memo(function BookingForm({
   tourId,
@@ -313,10 +289,10 @@ function Field({
   type?: string;
 }) {
   const inputClasses =
-    'w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#d00600] transition-colors';
+    'w-full min-w-0 max-w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-base md:text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#d00600] transition-colors';
 
   return (
-    <label className='flex flex-col gap-2 text-sm text-neutral-300'>
+    <label className='flex flex-col gap-2 text-sm text-neutral-300 min-w-0'>
       <span className='flex items-center gap-2'>
         {icon}
         <span>
@@ -337,7 +313,7 @@ function Field({
           type={type}
           placeholder={placeholder}
           required={required}
-          className={inputClasses}
+          className={`${inputClasses} ${type === 'date' ? 'appearance-none' : ''}`}
         />
       )}
     </label>

@@ -23,3 +23,12 @@ export function slugify(value: string) {
 
   return normalized.replace(/[^a-z0-9]/g, '')
 }
+
+export function buildInlinePdfPreviewSrc(pdfUrl: string) {
+  const suffix = 'toolbar=0&navpanes=0&scrollbar=0'
+  return pdfUrl.includes('#') ? `${pdfUrl}&${suffix}` : `${pdfUrl}#${suffix}`
+}
+
+export function buildGoogleViewerUrl(pdfUrl: string) {
+  return `https://drive.google.com/viewerng/viewer?url=${encodeURIComponent(pdfUrl)}`
+}

@@ -1,12 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { AnimatePresence, motion } from 'motion/react';
+import { motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { leaderService, type Leader } from '@/lib/services/leader';
 import { ANIMATION_EASE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import FullscreenModalShell from '@/components/fullscreen-modal-shell';
 import {
   ArrowUpRight,
   BadgeCheck,
@@ -17,7 +18,6 @@ import {
   MapPin,
   Sparkles,
   Users,
-  X,
 } from 'lucide-react';
 
 type LeaderCard = Leader & {
@@ -328,115 +328,101 @@ function LeaderModal({
   onClose: () => void;
 }) {
   return (
-    <AnimatePresence>
+    <FullscreenModalShell
+      open={Boolean(leader)}
+      onClose={onClose}
+      closeAriaLabel='Đóng chi tiết leader'
+      backdropClassName='bg-black/80 backdrop-blur-md'
+      contentClassName='h-full w-full overflow-y-auto bg-gradient-to-br from-[#101010] to-[#0a0a0a] border border-white/10 rounded-none shadow-2xl md:h-auto md:max-h-[90vh] md:max-w-5xl md:w-[90vw] md:rounded-3xl'
+      closeButtonClassName='right-4 top-4 md:right-3 md:top-3 border-white/10 bg-black/70 hover:border-red-400/70'
+      contentKey={leader?.id}
+    >
       {leader && (
-        <motion.div
-          className='fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md md:flex md:items-center md:justify-center'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
-          <motion.div
-            className='relative h-full w-full overflow-y-auto bg-gradient-to-br from-[#101010] to-[#0a0a0a] border border-white/10 rounded-none shadow-2xl md:h-auto md:max-h-[90vh] md:max-w-5xl md:w-[90vw] md:rounded-3xl'
-            initial={{ y: 40, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 20, opacity: 0 }}
-            transition={{ duration: 0.35, ease: ANIMATION_EASE }}
-          >
-            <button
-              onClick={onClose}
-              className='absolute right-4 top-4 md:right-3 md:top-3 z-10 rounded-full border border-white/10 bg-black/70 p-2 text-white hover:border-red-400/70 transition'
-            >
-              <X className='w-4 h-4' />
-            </button>
-
-            <div className='grid md:grid-cols-[1.05fr_0.95fr]'>
-              <div className='relative min-h-[320px] bg-gradient-to-br from-red-600/60 to-red-800/40'>
-                <Image
-                  src={leader.avatar_url || '/images/haithichdi1.jpg'}
-                  alt={leader.full_name}
-                  fill
-                  unoptimized
-                  sizes='(max-width: 768px) 100vw, 50vw'
-                  className='object-cover'
-                />
-                <div className='absolute inset-0 bg-gradient-to-t from-black to-transparent' />
-                <div className='absolute bottom-4 left-4 right-4'>
-                  <p className='text-xs uppercase tracking-[0.2em] text-red-200'>
-                    {leader.role_label || 'Leader'}
-                  </p>
-                  <p className='text-2xl font-semibold'>{leader.full_name}</p>
-                  <div className='flex flex-wrap gap-3 text-xs text-neutral-200 mt-2'>
-                    {leader.relationship && (
-                      <span className='inline-flex items-center gap-1 bg-black/60 px-3 py-1 rounded-full border border-white/10'>
-                        <Heart className='w-3 h-3 text-red-300' />
-                        {leader.relationship}
-                      </span>
-                    )}
-                    {leader.dob && (
-                      <span className='inline-flex items-center gap-1 bg-black/60 px-3 py-1 rounded-full border border-white/10'>
-                        <Calendar className='w-3 h-3' />
-                        {leader.dob}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className='p-6 sm:p-8 space-y-4'>
-                <div className='flex items-center gap-3 text-sm text-red-200'>
-                  <Flame className='w-4 h-4' />
-                  <span>
-                    {leader.highlight ||
-                      'Lan tỏa năng lượng tích cực, bảo vệ an toàn và cảm xúc của cả đoàn.'}
+        <div className='grid md:grid-cols-[1.05fr_0.95fr]'>
+          <div className='relative min-h-[320px] bg-gradient-to-br from-red-600/60 to-red-800/40'>
+            <Image
+              src={leader.avatar_url || '/images/haithichdi1.jpg'}
+              alt={leader.full_name}
+              fill
+              unoptimized
+              sizes='(max-width: 768px) 100vw, 50vw'
+              className='object-cover'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black to-transparent' />
+            <div className='absolute bottom-4 left-4 right-4'>
+              <p className='text-xs uppercase tracking-[0.2em] text-red-200'>
+                {leader.role_label || 'Leader'}
+              </p>
+              <p className='text-2xl font-semibold'>{leader.full_name}</p>
+              <div className='flex flex-wrap gap-3 text-xs text-neutral-200 mt-2'>
+                {leader.relationship && (
+                  <span className='inline-flex items-center gap-1 bg-black/60 px-3 py-1 rounded-full border border-white/10'>
+                    <Heart className='w-3 h-3 text-red-300' />
+                    {leader.relationship}
                   </span>
-                </div>
-
-                <div className='text-neutral-200 text-sm leading-relaxed space-y-3'>
-                  <p>
-                    {leader.bio ||
-                      'Leader của Hải Thích Đi, yêu rừng núi, giỏi điều phối nhịp đoàn và luôn dành thời gian lắng nghe từng thành viên.'}
-                  </p>
-                </div>
-
-                <div>
-                  <p className='text-xs uppercase tracking-[0.25em] text-red-200'>Strengths</p>
-                  <div className='mt-3 flex flex-wrap gap-2'>
-                    {(leader.strengths && leader.strengths.length > 0
-                      ? leader.strengths
-                      : ['Thể lực', 'An toàn', 'Kết nối', 'Ghi hình', 'Xử lý tình huống']
-                    ).map((item) => (
-                      <span
-                        key={item}
-                        className='inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-100'
-                      >
-                        <Camera className='w-3 h-3 text-red-300' />
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className='grid grid-cols-2 gap-3 text-sm text-neutral-300'>
-                  <div className='rounded-2xl border border-white/5 bg-white/5 px-3 py-3'>
-                    <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Email</p>
-                    <p className='font-medium mt-1'>{leader.email || 'hello@haithichdi.vn'}</p>
-                  </div>
-                  <div className='rounded-2xl border border-white/5 bg-white/5 px-3 py-3'>
-                    <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Gia nhập</p>
-                    <p className='font-medium mt-1'>
-                      {leader.date_joined
-                        ? new Date(leader.date_joined).toLocaleDateString('vi-VN')
-                        : '—'}
-                    </p>
-                  </div>
-                </div>
+                )}
+                {leader.dob && (
+                  <span className='inline-flex items-center gap-1 bg-black/60 px-3 py-1 rounded-full border border-white/10'>
+                    <Calendar className='w-3 h-3' />
+                    {leader.dob}
+                  </span>
+                )}
               </div>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+
+          <div className='p-6 sm:p-8 space-y-4'>
+            <div className='flex items-center gap-3 text-sm text-red-200'>
+              <Flame className='w-4 h-4' />
+              <span>
+                {leader.highlight ||
+                  'Lan tỏa năng lượng tích cực, bảo vệ an toàn và cảm xúc của cả đoàn.'}
+              </span>
+            </div>
+
+            <div className='text-neutral-200 text-sm leading-relaxed space-y-3'>
+              <p>
+                {leader.bio ||
+                  'Leader của Hải Thích Đi, yêu rừng núi, giỏi điều phối nhịp đoàn và luôn dành thời gian lắng nghe từng thành viên.'}
+              </p>
+            </div>
+
+            <div>
+              <p className='text-xs uppercase tracking-[0.25em] text-red-200'>Strengths</p>
+              <div className='mt-3 flex flex-wrap gap-2'>
+                {(leader.strengths && leader.strengths.length > 0
+                  ? leader.strengths
+                  : ['Thể lực', 'An toàn', 'Kết nối', 'Ghi hình', 'Xử lý tình huống']
+                ).map((item) => (
+                  <span
+                    key={item}
+                    className='inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-neutral-100'
+                  >
+                    <Camera className='w-3 h-3 text-red-300' />
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className='grid grid-cols-2 gap-3 text-sm text-neutral-300'>
+              <div className='rounded-2xl border border-white/5 bg-white/5 px-3 py-3'>
+                <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Email</p>
+                <p className='font-medium mt-1'>{leader.email || 'hello@haithichdi.vn'}</p>
+              </div>
+              <div className='rounded-2xl border border-white/5 bg-white/5 px-3 py-3'>
+                <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Gia nhập</p>
+                <p className='font-medium mt-1'>
+                  {leader.date_joined
+                    ? new Date(leader.date_joined).toLocaleDateString('vi-VN')
+                    : '—'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </FullscreenModalShell>
   );
 }
 

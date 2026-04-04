@@ -155,7 +155,9 @@ export default function HomeMobile() {
                   elevation={location.elevation_m}
                   imageUrl={location.full_image_url}
                   onClick={() =>
-                    router.push(`/locations?name=${slugify(location.name)}`)
+                    router.push(
+                      `/tours?mode=location&name=${slugify(location.name)}`,
+                    )
                   }
                 />
               ))}
