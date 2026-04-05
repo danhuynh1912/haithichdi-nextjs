@@ -319,16 +319,19 @@ function LeadersSection({
                     </span>
                   ))}
                 </div>
-                <button
-                  type='button'
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onSelect(leader);
-                  }}
-                  className='mt-4 md:hidden inline-flex items-center gap-2 rounded-xl border border-red-500/35 bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-200 active:scale-[0.98] transition-transform'
-                >
-                  Chi tiết
-                </button>
+                <div className='mt-4 flex justify-end md:hidden'>
+                  <button
+                    type='button'
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onSelect(leader);
+                    }}
+                    className='inline-flex items-center gap-1.5 text-xs font-semibold text-red-200 active:text-red-100 transition-colors'
+                  >
+                    Chi tiết
+                    <ArrowUpRight className='w-3.5 h-3.5' />
+                  </button>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -351,6 +354,7 @@ function LeaderModal({
       onClose={onClose}
       closeAriaLabel='Đóng chi tiết leader'
       backdropClassName='bg-black/80 backdrop-blur-md'
+      containerClassName='h-full w-full md:flex md:items-center md:justify-center md:p-6'
       contentClassName='h-full w-full overflow-y-auto bg-gradient-to-br from-[#101010] to-[#0a0a0a] border border-white/10 rounded-none shadow-2xl md:h-auto md:max-h-[90vh] md:max-w-5xl md:w-[90vw] md:rounded-3xl'
       closeButtonClassName='right-4 top-4 md:right-3 md:top-3 border-white/10 bg-black/70 hover:border-red-400/70'
       contentKey={leader?.id}
