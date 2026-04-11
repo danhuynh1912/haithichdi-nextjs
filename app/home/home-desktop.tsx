@@ -7,13 +7,21 @@ import { MoveRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import HotTours from '@/app/components/hotTours/hot-tours';
 import { ANIMATION_EASE } from '@/lib/constants';
+import {
+  HomeAboutJourneySection,
+  HomeFeaturedRoutesSection,
+} from './components/home-about-journey';
+import {
+  LeadersShowcaseSection,
+  MomentsGallerySection,
+} from '@/features/about/about-shared-sections';
 
 export default function HomeDesktop() {
   const router = useRouter();
 
   return (
-    <main>
-      <section className='text-white absolute w-screen h-screen bg-black/50 bg-cover bg-[center_70%]'>
+    <main className='bg-black text-white'>
+      <section className='relative min-h-screen overflow-hidden'>
         <Image
           src='/images/haithichdi1.webp'
           alt='Trekking Haithichdi'
@@ -22,9 +30,9 @@ export default function HomeDesktop() {
           sizes='100vw'
           className='object-cover'
         />
-        <div className='relative lg:flex justify-between h-screen p-8 lg:pr-0'>
-          <div className='z-0 absolute inset-0 bg-black/40' />
-          <div className='relative lg:pl-32 pt-31 lg:pt-62 z-1 lg:w-[50%] max-w-[700px]'>
+        <div className='relative lg:flex justify-between min-h-screen p-8 lg:pr-0'>
+          <div className='z-0 absolute inset-0 bg-black/45' />
+          <div className='relative lg:pl-[clamp(16px,7vw,110px)] pt-31 lg:pt-70 z-1 lg:w-[60%] max-w-[900px]'>
             <motion.p
               initial={{ opacity: 0, transform: 'translateY(60px)' }}
               animate={{ opacity: 1, transform: 'translateY(0px)' }}
@@ -44,9 +52,9 @@ export default function HomeDesktop() {
                 ease: ANIMATION_EASE,
                 duration: 1,
               }}
-              className='leading-[clamp(2rem,5vw,75px)] text-[clamp(2rem,5vw,72px)] font-black mt-4'
+              className='leading-[clamp(2rem,5vw,65px)] text-[clamp(2rem,5vw,72px)] font-black mt-4'
             >
-              CHUYÊN TOUR <br /> TREKKING
+              HẢI THÍCH ĐI <br /> <span className='leading-[clamp(1rem,3vw,30px)] text-[clamp(2rem,5vw,36px)]'>TREKKING - KẾT NỐI - THIỆN NGUYỆN</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, transform: 'translateY(60px)' }}
@@ -56,12 +64,11 @@ export default function HomeDesktop() {
                 ease: ANIMATION_EASE,
                 duration: 1,
               }}
-              className='text-[20px] mt-6'
+              className='text-[20px] mt-6 max-w-[550px]'
             >
-              Với Hải Thích Đi, trekking không đơn thuần là đi thật xa leo thật
-              cao, mà là hành trình đi sâu vào thiên nhiên, cùng những con người
-              tử tế tạo nên những tác động tích cực, bền vững cho núi rừng và
-              cộng đồng Việt Nam.
+              Chúng tôi không đưa bạn đi du lịch. Chúng tôi đưa bạn bước ra khỏi
+              vùng an toàn, chạm đến những đỉnh núi cao nhất Việt Nam và chạm đến
+              chính mình.
             </motion.p>
 
             <motion.div
@@ -75,18 +82,35 @@ export default function HomeDesktop() {
             >
               <Button
                 size='xl'
-                className='mt-6 text-lg has-[>svg]:px-16 has-[>svg]:py-8 shadow-lg'
+                className='mt-6 text-lg has-[>svg]:px-8 has-[>svg]:py-8 shadow-lg'
                 onClick={() => router.push('/tours')}
               >
-                Booking
+                Khám phá tất cả tour trekking
                 <MoveRight className='ml-2' />
               </Button>
             </motion.div>
           </div>
           <HotTours className='mt-16 max-w-[500px] w-[500px]' />
-          <div className='pointer-events-none absolute h-[400px] bottom-0 left-0 right-0 bg-gradient-to-b from-black/0 to-black' />
+          <div className='pointer-events-none absolute h-[420px] bottom-0 left-0 right-0 bg-gradient-to-b from-black/0 to-black' />
         </div>
       </section>
+
+      <HomeAboutJourneySection />
+      <LeadersShowcaseSection
+        id='leaders'
+        eyebrow='Đội ngũ dẫn đoàn'
+        title='Leaders - Trái tim của mỗi hành trình'
+        description='Không chỉ dẫn đường, leaders của Hải Thích Đi là những người giữ nhịp đoàn, truyền năng lượng và đảm bảo an toàn trên từng chặng trek.'
+        helperText='Mở profile để xem thế mạnh của từng leader'
+        className='bg-gradient-to-b from-[#070707] via-[#0a0a0a] to-[#080808]'
+      />
+      <HomeFeaturedRoutesSection />
+      <MomentsGallerySection
+        eyebrow='Khoảnh khắc đáng nhớ'
+        title='Khoảnh khắc đáng nhớ'
+        description='Giữ lại những khoảnh khắc thật nhất trên đường trek, từ bình minh trên đỉnh đến nụ cười cuối ngày.'
+        className='bg-gradient-to-b from-[#070707] via-black to-[#040404]'
+      />
     </main>
   );
 }

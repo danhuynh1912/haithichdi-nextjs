@@ -71,10 +71,10 @@ export default function SiteHeader() {
           <Link href='/tours' className='hover:text-red-500 transition-colors'>
             Tours
           </Link>
-          <Link href='/about' className='hover:text-red-500 transition-colors'>
+          <Link href='/#about-us' className='hover:text-red-500 transition-colors'>
             Về chúng tôi
           </Link>
-          <Link href='/contact' className='hover:text-red-500 transition-colors'>
+          <Link href='/#site-footer' className='hover:text-red-500 transition-colors'>
             Liên hệ
           </Link>
           {showBookedToursItem && (

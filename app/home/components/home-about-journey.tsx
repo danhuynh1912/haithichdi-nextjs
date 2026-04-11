@@ -1,0 +1,452 @@
+'use client';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'motion/react';
+import { type ComponentType } from 'react';
+import {
+  ArrowRight,
+  Compass,
+  HandHeart,
+  HeartHandshake,
+  Mountain,
+  ShieldCheck,
+  Sparkles,
+  Stars,
+} from 'lucide-react';
+import { ANIMATION_EASE } from '@/lib/constants';
+import { cn, slugify } from '@/lib/utils';
+
+type KeywordCard = {
+  title: string;
+  body: string;
+  Icon: ComponentType<{ className?: string }>;
+};
+
+type ValueSection = {
+  key: string;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  bullets: string[];
+  outro: string;
+  image: string;
+  imageAlt: string;
+  ctaLabel: string;
+  locationName: string;
+  difficulty: string;
+};
+
+const keywordCards: KeywordCard[] = [
+  {
+    title: 'Trekking',
+    body: 'Chinh phục cung khó, vượt giới hạn thật sự bằng thể lực và tinh thần.',
+    Icon: Mountain,
+  },
+  {
+    title: 'Kết nối',
+    body: 'Từ người lạ thành đồng đội, đồng hành cùng nhau trên mọi đoạn dốc.',
+    Icon: HeartHandshake,
+  },
+  {
+    title: 'Thiện nguyện',
+    body: 'Mỗi chuyến đi đều có giá trị để lại cho cộng đồng địa phương.',
+    Icon: HandHeart,
+  },
+];
+
+const impactStats = [
+  { label: 'Trekkers đã đồng hành', value: '5000+' },
+  { label: 'Hành trình tổ chức', value: '120+' },
+  { label: 'Đánh giá trung bình', value: '4.9/5' },
+];
+
+const valueSections: ValueSection[] = [
+  {
+    key: 'trekking',
+    eyebrow: 'Trekking',
+    title: 'Chinh phục giới hạn thật sự',
+    intro:
+      'Chúng tôi không tổ chức những chuyến đi cho có trải nghiệm. Hải Thích Đi lựa chọn những cung đường có độ thử thách thật để bạn cảm nhận rõ hành trình vượt giới hạn.',
+    bullets: [
+      'Lộ trình theo cấp độ: người mới, trung cấp, nâng cao.',
+      'Các cung trekking tiêu biểu: Tà Xùa, Phu Sa Phìn, Fansipan, rừng rêu Samu.',
+      'Leader đi cùng có kinh nghiệm địa hình, xử lý tình huống thực tế.',
+      'Briefing trước chuyến đi về thể lực, kỹ năng và chuẩn bị cá nhân.',
+      'Tỷ lệ khách từng nghĩ không leo được nhưng vẫn lên đỉnh rất cao.',
+    ],
+    outro: 'Không phải ai cũng khỏe từ đầu, nhưng ai cũng có thể mạnh hơn sau chuyến đi.',
+    image: '/images/tachinhu1.jpg',
+    imageAlt: 'Trekking vượt giới hạn cùng Hải Thích Đi',
+    ctaLabel: 'Xem cung trekking',
+    locationName: 'Ta Xua',
+    difficulty: 'Người mới + trung cấp',
+  },
+  {
+    key: 'ket-noi',
+    eyebrow: 'Kết nối',
+    title: 'Từ người lạ thành đồng đội',
+    intro:
+      'Điều đặc biệt nhất của Hải Thích Đi không nằm ở cung đường, mà nằm ở con người. Bạn có thể đi một mình, nhưng không bao giờ một mình trong hành trình.',
+    bullets: [
+      '90% khách đi một mình nhưng khi về đều có thêm bạn.',
+      'Trong hành trình, cả đoàn chia nước, đồ ăn và kéo nhau qua đoạn khó.',
+      'Sau tour, nhiều nhóm vẫn giữ liên lạc và rủ nhau đi tiếp.',
+      'Văn hóa đoàn: không bỏ lại ai phía sau.',
+      'Kết nối sâu với đồng bào vùng cao, porter và người dẫn đường địa phương.',
+    ],
+    outro:
+      'Không chỉ là đi cùng nhau, mà là hiểu nhau hơn giữa người thành phố và người vùng cao.',
+    image: '/images/haithichdi1.jpg',
+    imageAlt: 'Kết nối giữa những người đồng hành trong chuyến trek',
+    ctaLabel: 'Khám phá lịch tour',
+    locationName: 'Ky Quan San',
+    difficulty: 'Mở rộng cộng đồng',
+  },
+  {
+    key: 'thien-nguyen',
+    eyebrow: 'Thiện nguyện',
+    title: 'Đi để lại giá trị',
+    intro:
+      'Một chuyến đi trọn vẹn không chỉ là bạn nhận được gì, mà còn là bạn để lại điều gì cho nơi mình đi qua.',
+    bullets: [
+      'Kết hợp tặng quà cho trẻ em vùng cao trong một số hành trình.',
+      'Ưu tiên dùng dịch vụ địa phương: porter, homestay, thực phẩm bản địa.',
+      'Hỗ trợ người dân qua du lịch bền vững.',
+      'Giữ ý thức bảo vệ môi trường: không xả rác, thu gom rác trên đường trek.',
+      'Nhiều đoàn chủ động quyên góp thêm sau chuyến đi.',
+    ],
+    outro:
+      'Mỗi bước chân không chỉ in dấu trên núi mà còn để lại giá trị ở nơi bạn đi qua.',
+    image:
+      'https://images.unsplash.com/photo-1469571486292-b53601020f45?auto=format&fit=crop&w=1600&q=80',
+    imageAlt: 'Tinh thần thiện nguyện trong hành trình trekking',
+    ctaLabel: 'Xem hành trình ý nghĩa',
+    locationName: 'Nhiu Co San',
+    difficulty: 'Du lịch bền vững',
+  },
+];
+
+const representativeRoutes = [
+  {
+    title: 'Phu Sa Phìn',
+    subtitle: 'Cung hot nhất hiện tại',
+    image:
+      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    title: 'Rừng rêu Samu',
+    subtitle: 'Lạc vào thế giới cổ tích',
+    image:
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
+  },
+  {
+    title: 'Tà Chì Nhù',
+    subtitle: 'Thiên đường biển mây',
+    image:
+      'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=80',
+  },
+];
+
+const advancedRoutes = ['Nhìu Cồ San', 'Ky Quan San', 'Lùng Cúng', 'Tà Chì Nhù', 'Putaleng'];
+
+const sectionRevealInitial = {
+  opacity: 0,
+  y: 92,
+} as const;
+
+const sectionRevealTransition = {
+  duration: 1.5,
+  delay: 0.5,
+  ease: ANIMATION_EASE,
+} as const;
+
+export function HomeAboutJourneySection() {
+  return (
+    <>
+      <section
+        id='about-us'
+        className='relative border-t border-white/5 bg-gradient-to-b from-black via-[#080808] to-[#111111] py-20 lg:py-24 scroll-mt-28'
+      >
+        <div className='pointer-events-none absolute inset-0'>
+          <div className='absolute top-0 left-[-8%] h-72 w-72 rounded-full bg-[#d00600]/16 blur-[120px]' />
+          <div className='absolute top-[24%] right-[-6%] h-80 w-80 rounded-full bg-[#ff5f36]/12 blur-[130px]' />
+          <div className='absolute bottom-[-100px] left-[40%] h-72 w-72 rounded-full bg-[#d00600]/10 blur-[140px]' />
+          <div className='absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_75%_10%,rgba(255,120,90,0.2),transparent_34%),radial-gradient(circle_at_10%_80%,rgba(208,6,0,0.18),transparent_35%)]' />
+        </div>
+
+        <motion.div
+          initial={sectionRevealInitial}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={sectionRevealTransition}
+          className='relative mx-auto grid w-full max-w-[1400px] gap-8 px-4 sm:px-8 lg:grid-cols-[1.08fr_0.92fr]'
+        >
+          <div className='space-y-7'>
+            <div className='inline-flex items-center gap-2 rounded-full border border-red-400/35 bg-red-500/10 px-4 py-2 text-xs uppercase tracking-[0.22em] text-red-100'>
+              <Sparkles className='h-4 w-4 text-red-300' />
+              Về chúng tôi
+            </div>
+
+            <h2 className='text-4xl font-black leading-tight md:text-5xl'>Hải Thích Đi là ai?</h2>
+
+            <div className='space-y-4 text-neutral-200 leading-relaxed text-base'>
+              <p>
+                Hải Thích Đi được sinh ra từ những bước chân đầu tiên trên núi, nơi mà mỗi
+                hành trình không chỉ là leo lên một đỉnh cao, mà là hành trình vượt qua chính
+                mình.
+              </p>
+              <p className='font-semibold text-red-100'>
+                Chúng tôi tin rằng: Ai cũng có một giới hạn nhưng rất ít người dám bước ra để
+                chạm vào nó.
+              </p>
+              <p>
+                Hải Thích Đi không hướng đến những chuyến du lịch nghỉ dưỡng. Chúng tôi tạo ra
+                những trải nghiệm thật:
+              </p>
+              <ul className='space-y-1 text-neutral-100'>
+                <li>Leo những cung đường khó.</li>
+                <li>Chạm vào thiên nhiên hoang sơ.</li>
+                <li>Kết nối những con người xa lạ thành một đội.</li>
+              </ul>
+              <p>
+                Với đội ngũ leader giàu kinh nghiệm, am hiểu địa hình và luôn đặt sự an toàn lên
+                hàng đầu, Hải Thích Đi đồng hành cùng bạn trên từng bước chân, từ lúc còn nghi ngờ
+                bản thân cho đến khi đứng trên đỉnh.
+              </p>
+
+              <div className='mt-5 rounded-2xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-100'>
+                👉 “Mình làm được rồi.”
+              </div>
+
+              <div className='mt-5 grid gap-3 sm:grid-cols-3'>
+                {impactStats.map((stat) => (
+                  <div
+                    key={stat.label}
+                    className='rounded-2xl border border-white/10 bg-black/40 px-4 py-3'
+                  >
+                    <p className='text-xl font-black text-white'>{stat.value}</p>
+                    <p className='mt-1 text-[11px] uppercase tracking-[0.14em] text-neutral-400'>
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className='flex flex-col gap-4'>
+            {keywordCards.map(({ title, body, Icon }, index) => (
+              <motion.article
+                key={title}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, ease: ANIMATION_EASE, delay: index * 0.06 }}
+              >
+                <div className='h-full rounded-3xl bg-white/5 p-6 backdrop-blur-md'>
+                  <div className='mb-4 inline-flex rounded-2xl border border-red-400/35 bg-red-500/15 p-3 text-red-200'>
+                    <Icon className='h-5 w-5' />
+                  </div>
+                  <h3 className='text-2xl font-bold'>{title}</h3>
+                  <p className='mt-3 text-sm leading-relaxed text-neutral-300'>{body}</p>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {valueSections.map((section, index) => (
+        <section
+          key={section.key}
+          className='relative border-t border-white/5 bg-gradient-to-b from-[#0a0a0a] via-black to-[#080808] py-16 lg:py-20 scroll-mt-28'
+        >
+          <div className='pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_85%_20%,rgba(208,6,0,0.18),transparent_32%),radial-gradient(circle_at_20%_70%,rgba(255,120,90,0.12),transparent_35%)]' />
+          <p className='pointer-events-none absolute right-6 top-6 text-[56px] font-black uppercase tracking-[0.12em] text-white/[0.04] lg:right-10 lg:text-[90px]'>
+            {section.eyebrow}
+          </p>
+
+          <motion.div
+            initial={sectionRevealInitial}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={sectionRevealTransition}
+            className={cn(
+              'relative mx-auto grid w-full max-w-[1400px] items-center gap-8 px-4 sm:px-8 lg:grid-cols-2',
+              index % 2 === 1 && 'lg:[&>*:first-child]:order-2',
+            )}
+          >
+            <div className='relative'>
+              <div className='inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-red-500/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-red-100'>
+                <Compass className='h-3.5 w-3.5' />
+                {section.eyebrow}
+              </div>
+              <h3 className='mt-4 text-3xl font-black leading-tight md:text-4xl'>{section.title}</h3>
+              <p className='mt-4 text-base leading-relaxed text-neutral-200'>{section.intro}</p>
+
+              <div className='mt-5 rounded-2xl border border-white/10 bg-black/45 p-4'>
+                <p className='text-[11px] uppercase tracking-[0.16em] text-red-200'>
+                  Dẫn chứng thực tế
+                </p>
+                <ul className='mt-3 space-y-2 text-sm text-neutral-200 leading-relaxed'>
+                  {section.bullets.map((bullet, bulletIndex) => (
+                    <li key={bullet} className='flex gap-2.5'>
+                      <span className='mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-red-400/50 bg-red-500/18 text-[10px] font-semibold text-red-100'>
+                        {bulletIndex + 1}
+                      </span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <p className='mt-5 text-red-100 font-semibold'>{section.outro}</p>
+              <div className='mt-5 flex flex-wrap items-center gap-3'>
+                <Link
+                  href={`/tours?mode=location&name=${slugify(section.locationName)}`}
+                  className='inline-flex items-center gap-2 rounded-full border border-red-400/45 bg-red-500/15 px-5 py-2.5 text-sm font-semibold text-red-100 hover:bg-red-500/25 transition-colors'
+                >
+                  {section.ctaLabel}
+                  <ArrowRight className='h-4 w-4' />
+                </Link>
+                <span className='rounded-full border border-white/[0.12] bg-white/[0.06] px-4 py-2 text-xs text-neutral-200'>
+                  {section.difficulty}
+                </span>
+              </div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97, y: 18 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: ANIMATION_EASE }}
+              className='relative overflow-hidden rounded-[30px] border border-white/10 shadow-[0_30px_90px_-45px_rgba(208,6,0,0.8)]'
+            >
+              <Image
+                src={section.image}
+                alt={section.imageAlt}
+                width={1500}
+                height={980}
+                className='h-[450px] w-full object-cover'
+                unoptimized={section.image.startsWith('http')}
+              />
+              <div className='absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent' />
+              <div className='absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-3 py-1.5 text-xs text-neutral-100 backdrop-blur-md'>
+                <Stars className='h-3.5 w-3.5 text-red-200' />
+                Hải Thích Đi Journey
+              </div>
+              <div className='absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/55 p-4 backdrop-blur-md'>
+                <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Keyword Highlight</p>
+                <p className='mt-1 text-lg font-semibold'>{section.title}</p>
+              </div>
+            </motion.div>
+          </motion.div>
+        </section>
+      ))}
+    </>
+  );
+}
+
+export function HomeFeaturedRoutesSection() {
+  return (
+    <section className='relative border-t border-white/5 bg-gradient-to-b from-[#090909] via-black to-[#070707] py-16 lg:py-20'>
+      <div className='pointer-events-none absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_15%_15%,rgba(208,6,0,0.18),transparent_32%),radial-gradient(circle_at_85%_85%,rgba(255,120,90,0.14),transparent_32%)]' />
+      <motion.div
+        initial={sectionRevealInitial}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={sectionRevealTransition}
+        className='relative mx-auto w-full max-w-[1400px] space-y-10 px-4 sm:px-8'
+      >
+        <div className='space-y-4 max-w-4xl'>
+          <p className='inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-red-200'>
+            <ShieldCheck className='h-4 w-4 text-red-300' />
+            Tour trekking nổi bật
+          </p>
+          <h2 className='text-4xl font-black leading-tight md:text-5xl'>
+            Những cung đường không dành cho người chỉ muốn “đi chơi”
+          </h2>
+        </div>
+
+        <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
+          <article className='group relative overflow-hidden rounded-[32px] border border-white/10'>
+            <Image
+              src='/images/haithichdi1.jpg'
+              alt='Tà Xùa - Sống lưng khủng long'
+              width={1600}
+              height={1200}
+              className='h-full min-h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
+            />
+            <div className='absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent' />
+            <div className='absolute inset-x-0 bottom-0 p-7'>
+              <p className='text-xs uppercase tracking-[0.22em] text-red-200'>Main Route</p>
+              <h3 className='mt-2 text-3xl font-black'>Tà Xùa – Sống lưng khủng long</h3>
+              <p className='mt-3 max-w-2xl text-sm text-neutral-200'>
+                Một trong những cung trekking đẹp nhất miền Bắc, nổi tiếng với biển mây và những
+                đoạn sống lưng đầy thử thách.
+              </p>
+              <p className='mt-2 text-sm font-semibold text-red-100'>Phù hợp: Người mới + trung cấp.</p>
+              <Link
+                href={`/tours?mode=location&name=${slugify('Ta Xua')}`}
+                className='mt-4 inline-flex items-center gap-2 rounded-full border border-red-400/45 bg-red-500/18 px-5 py-2 text-sm font-semibold text-red-100 hover:bg-red-500/28 transition-colors'
+              >
+                Xem lịch tour Tà Xùa
+                <ArrowRight className='h-4 w-4' />
+              </Link>
+            </div>
+          </article>
+
+          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
+            {representativeRoutes.map((route, index) => (
+              <motion.div
+                key={route.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, ease: ANIMATION_EASE, delay: index * 0.06 }}
+              >
+                <Link
+                  href={`/tours?mode=location&name=${slugify(route.title)}`}
+                  className='group relative block overflow-hidden rounded-3xl border border-white/10'
+                >
+                  <Image
+                    src={route.image}
+                    alt={route.title}
+                    width={1200}
+                    height={780}
+                    className='h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105'
+                    unoptimized
+                  />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/85 to-black/20' />
+                  <div className='absolute inset-x-0 bottom-0 p-4'>
+                    <p className='text-lg font-bold'>{route.title}</p>
+                    <p className='text-sm text-neutral-200'>{route.subtitle}</p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.08] via-black/45 to-black/70 p-6 backdrop-blur-sm'>
+          <p className='text-sm text-neutral-200'>
+            Hành trình chinh phục đỉnh cao, thử thách thể lực và ý chí rõ ràng nhất.
+          </p>
+          <p className='mt-2 text-sm font-semibold text-red-100'>Phù hợp: Người muốn vượt giới hạn.</p>
+          <div className='mt-5 flex flex-wrap gap-2.5'>
+            {advancedRoutes.map((route) => (
+              <Link
+                key={route}
+                href={`/tours?mode=location&name=${slugify(route)}`}
+                className='rounded-full border border-white/10 bg-black/45 px-4 py-2 text-sm text-neutral-100 transition-colors hover:border-red-400/60 hover:text-white'
+              >
+                {route}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
