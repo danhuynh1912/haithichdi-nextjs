@@ -25,7 +25,7 @@ export default function RootLayout({
         {/* <PageTransition /> */}
         <SiteHeader />
         <Providers>
-          <div className='pb-20 md:pb-0 min-h-screen flex flex-col overflow-x-hidden'>
+          <div className='pb-[65px] md:pb-0 min-h-screen flex flex-col overflow-x-hidden'>
             <div className='flex-1'>{children}</div>
             <SiteFooter />
           </div>

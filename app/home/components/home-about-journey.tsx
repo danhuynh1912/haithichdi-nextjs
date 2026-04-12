@@ -166,13 +166,11 @@ export function HomeAboutJourneySection() {
     <>
       <section
         id='about-us'
-        className='relative border-t border-white/5 bg-gradient-to-b from-black via-[#080808] to-[#111111] py-20 lg:py-24 scroll-mt-28'
+        className='relative bg-gradient-to-b from-[#111111] via-[#131313] to-[#191919] py-14 sm:py-16 lg:py-24 scroll-mt-28'
       >
         <div className='pointer-events-none absolute inset-0'>
-          <div className='absolute top-0 left-[-8%] h-72 w-72 rounded-full bg-[#d00600]/16 blur-[120px]' />
-          <div className='absolute top-[24%] right-[-6%] h-80 w-80 rounded-full bg-[#ff5f36]/12 blur-[130px]' />
-          <div className='absolute bottom-[-100px] left-[40%] h-72 w-72 rounded-full bg-[#d00600]/10 blur-[140px]' />
-          <div className='absolute inset-0 opacity-25 bg-[radial-gradient(circle_at_75%_10%,rgba(255,120,90,0.2),transparent_34%),radial-gradient(circle_at_10%_80%,rgba(208,6,0,0.18),transparent_35%)]' />
+          <div className='absolute inset-0 bg-[radial-gradient(120%_88%_at_50%_62%,rgba(208,6,0,0.12)_0%,transparent_58%)]' />
+          <div className='absolute inset-0 bg-[radial-gradient(86%_72%_at_100%_100%,rgba(208,6,0,0.08)_0%,transparent_62%)]' />
         </div>
 
         <motion.div
@@ -188,7 +186,9 @@ export function HomeAboutJourneySection() {
               Về chúng tôi
             </div>
 
-            <h2 className='text-4xl font-black leading-tight md:text-5xl'>Hải Thích Đi là ai?</h2>
+            <h2 className='text-2xl sm:text-3xl md:text-5xl font-black leading-tight'>
+              Hải Thích Đi là ai?
+            </h2>
 
             <div className='space-y-4 text-neutral-200 leading-relaxed text-base'>
               <p>
@@ -223,7 +223,7 @@ export function HomeAboutJourneySection() {
                 {impactStats.map((stat) => (
                   <div
                     key={stat.label}
-                    className='rounded-2xl border border-white/10 bg-black/40 px-4 py-3'
+                    className='rounded-2xl border border-white/10 bg-black/30 px-4 py-3'
                   >
                     <p className='text-xl font-black text-white'>{stat.value}</p>
                     <p className='mt-1 text-[11px] uppercase tracking-[0.14em] text-neutral-400'>
@@ -248,7 +248,7 @@ export function HomeAboutJourneySection() {
                   <div className='mb-4 inline-flex rounded-2xl border border-red-400/35 bg-red-500/15 p-3 text-red-200'>
                     <Icon className='h-5 w-5' />
                   </div>
-                  <h3 className='text-2xl font-bold'>{title}</h3>
+                  <h3 className='text-xl sm:text-2xl font-bold'>{title}</h3>
                   <p className='mt-3 text-sm leading-relaxed text-neutral-300'>{body}</p>
                 </div>
               </motion.article>
@@ -260,10 +260,11 @@ export function HomeAboutJourneySection() {
       {valueSections.map((section, index) => (
         <section
           key={section.key}
-          className='relative border-t border-white/5 bg-gradient-to-b from-[#0a0a0a] via-black to-[#080808] py-16 lg:py-20 scroll-mt-28'
+          className='relative border-t border-white/5 bg-gradient-to-b from-[#101010] via-[#121212] to-[#181818] py-14 sm:py-16 lg:py-20 scroll-mt-28'
         >
-          <div className='pointer-events-none absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_85%_20%,rgba(208,6,0,0.18),transparent_32%),radial-gradient(circle_at_20%_70%,rgba(255,120,90,0.12),transparent_35%)]' />
-          <p className='pointer-events-none absolute right-6 top-6 text-[56px] font-black uppercase tracking-[0.12em] text-white/[0.04] lg:right-10 lg:text-[90px]'>
+          <div className='pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.012)_0%,rgba(255,255,255,0)_28%)]' />
+          <div className='pointer-events-none absolute inset-0 opacity-70 bg-[radial-gradient(88%_72%_at_90%_18%,rgba(208,6,0,0.14)_0%,transparent_52%)]' />
+          <p className='pointer-events-none absolute right-4 top-5 text-[36px] sm:right-6 sm:top-6 sm:text-[56px] font-black uppercase tracking-[0.12em] text-white/[0.04] lg:right-10 lg:text-[90px]'>
             {section.eyebrow}
           </p>
 
@@ -282,10 +283,12 @@ export function HomeAboutJourneySection() {
                 <Compass className='h-3.5 w-3.5' />
                 {section.eyebrow}
               </div>
-              <h3 className='mt-4 text-3xl font-black leading-tight md:text-4xl'>{section.title}</h3>
+              <h3 className='mt-4 text-2xl sm:text-3xl md:text-4xl font-black leading-tight'>
+                {section.title}
+              </h3>
               <p className='mt-4 text-base leading-relaxed text-neutral-200'>{section.intro}</p>
 
-              <div className='mt-5 rounded-2xl border border-white/10 bg-black/45 p-4'>
+              <div className='mt-5 rounded-2xl border border-white/10 bg-black/35 p-4'>
                 <p className='text-[11px] uppercase tracking-[0.16em] text-red-200'>
                   Dẫn chứng thực tế
                 </p>
@@ -328,15 +331,15 @@ export function HomeAboutJourneySection() {
                 alt={section.imageAlt}
                 width={1500}
                 height={980}
-                className='h-[450px] w-full object-cover'
+                className='h-[300px] sm:h-[380px] lg:h-[450px] w-full object-cover'
                 unoptimized={section.image.startsWith('http')}
               />
-              <div className='absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent' />
-              <div className='absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/55 px-3 py-1.5 text-xs text-neutral-100 backdrop-blur-md'>
+              <div className='absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent' />
+              <div className='absolute left-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/45 px-3 py-1.5 text-xs text-neutral-100 backdrop-blur-md'>
                 <Stars className='h-3.5 w-3.5 text-red-200' />
                 Hải Thích Đi Journey
               </div>
-              <div className='absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/55 p-4 backdrop-blur-md'>
+              <div className='absolute bottom-5 left-5 right-5 rounded-2xl border border-white/10 bg-black/45 p-4 backdrop-blur-md'>
                 <p className='text-xs uppercase tracking-[0.2em] text-red-200'>Keyword Highlight</p>
                 <p className='mt-1 text-lg font-semibold'>{section.title}</p>
               </div>
@@ -350,8 +353,9 @@ export function HomeAboutJourneySection() {
 
 export function HomeFeaturedRoutesSection() {
   return (
-    <section className='relative border-t border-white/5 bg-gradient-to-b from-[#090909] via-black to-[#070707] py-16 lg:py-20'>
-      <div className='pointer-events-none absolute inset-0 opacity-35 bg-[radial-gradient(circle_at_15%_15%,rgba(208,6,0,0.18),transparent_32%),radial-gradient(circle_at_85%_85%,rgba(255,120,90,0.14),transparent_32%)]' />
+    <section className='relative border-t border-white/5 bg-gradient-to-b from-[#101010] via-[#131313] to-[#191919] py-14 sm:py-16 lg:py-20'>
+      <div className='pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.012)_0%,rgba(255,255,255,0)_28%)]' />
+      <div className='pointer-events-none absolute inset-0 opacity-65 bg-[radial-gradient(100%_86%_at_14%_10%,rgba(208,6,0,0.14)_0%,transparent_58%)]' />
       <motion.div
         initial={sectionRevealInitial}
         whileInView={{ opacity: 1, y: 0 }}
@@ -364,24 +368,24 @@ export function HomeFeaturedRoutesSection() {
             <ShieldCheck className='h-4 w-4 text-red-300' />
             Tour trekking nổi bật
           </p>
-          <h2 className='text-4xl font-black leading-tight md:text-5xl'>
+          <h2 className='text-2xl sm:text-3xl md:text-5xl font-black leading-tight'>
             Những cung đường không dành cho người chỉ muốn “đi chơi”
           </h2>
         </div>
 
         <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
           <article className='group relative overflow-hidden rounded-[32px] border border-white/10'>
-            <Image
-              src='/images/haithichdi1.jpg'
-              alt='Tà Xùa - Sống lưng khủng long'
-              width={1600}
-              height={1200}
-              className='h-full min-h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
-            />
-            <div className='absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent' />
+              <Image
+                src='/images/haithichdi1.jpg'
+                alt='Tà Xùa - Sống lưng khủng long'
+                width={1600}
+                height={1200}
+                className='h-full min-h-[300px] sm:min-h-[360px] lg:min-h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
+              />
+            <div className='absolute inset-0 bg-gradient-to-t from-black/78 via-black/25 to-transparent' />
             <div className='absolute inset-x-0 bottom-0 p-7'>
               <p className='text-xs uppercase tracking-[0.22em] text-red-200'>Main Route</p>
-              <h3 className='mt-2 text-3xl font-black'>Tà Xùa – Sống lưng khủng long</h3>
+              <h3 className='mt-2 text-2xl sm:text-3xl font-black'>Tà Xùa – Sống lưng khủng long</h3>
               <p className='mt-3 max-w-2xl text-sm text-neutral-200'>
                 Một trong những cung trekking đẹp nhất miền Bắc, nổi tiếng với biển mây và những
                 đoạn sống lưng đầy thử thách.
@@ -418,7 +422,7 @@ export function HomeFeaturedRoutesSection() {
                     className='h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105'
                     unoptimized
                   />
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/85 to-black/20' />
+                  <div className='absolute inset-0 bg-gradient-to-t from-black/72 to-black/15' />
                   <div className='absolute inset-x-0 bottom-0 p-4'>
                     <p className='text-lg font-bold'>{route.title}</p>
                     <p className='text-sm text-neutral-200'>{route.subtitle}</p>
@@ -429,7 +433,7 @@ export function HomeFeaturedRoutesSection() {
           </div>
         </div>
 
-        <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.08] via-black/45 to-black/70 p-6 backdrop-blur-sm'>
+        <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-black/32 to-black/55 p-6 backdrop-blur-sm'>
           <p className='text-sm text-neutral-200'>
             Hành trình chinh phục đỉnh cao, thử thách thể lực và ý chí rõ ràng nhất.
           </p>
@@ -439,7 +443,7 @@ export function HomeFeaturedRoutesSection() {
               <Link
                 key={route}
                 href={`/tours?mode=location&name=${slugify(route)}`}
-                className='rounded-full border border-white/10 bg-black/45 px-4 py-2 text-sm text-neutral-100 transition-colors hover:border-red-400/60 hover:text-white'
+                className='rounded-full border border-white/10 bg-black/35 px-4 py-2 text-sm text-neutral-100 transition-colors hover:border-red-400/60 hover:text-white'
               >
                 {route}
               </Link>

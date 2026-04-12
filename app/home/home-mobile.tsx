@@ -9,6 +9,14 @@ import { locationService } from '@/lib/services/location';
 import { tourService } from '@/lib/services/tour';
 import { formatDateDdMm, slugify } from '@/lib/utils';
 import HomeMobileSectionSkeleton from './components/home-mobile-section-skeleton';
+import {
+  HomeAboutJourneySection,
+  HomeFeaturedRoutesSection,
+} from './components/home-about-journey';
+import {
+  LeadersShowcaseSection,
+  MomentsGallerySection,
+} from '@/features/about/about-shared-sections';
 
 const HotLocationCard = memo(function HotLocationCard({
   name,
@@ -134,14 +142,14 @@ export default function HomeMobile() {
   );
 
   return (
-    <main className='relative min-h-screen overflow-hidden bg-[#070707] text-white px-4 pt-24 pb-28 text-[11px]'>
+    <main className='relative min-h-screen overflow-hidden bg-[#0d0d0d] text-white pt-24 pb-28 text-[11px]'>
       <div className='pointer-events-none absolute inset-0'>
-        <div className='absolute -top-24 -left-20 h-64 w-64 rounded-full bg-[#d00600]/16 blur-3xl' />
-        <div className='absolute top-1/3 -right-20 h-72 w-72 rounded-full bg-[#a00303]/12 blur-[120px]' />
-        <div className='absolute bottom-[-140px] left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-[#d00600]/10 blur-3xl' />
+        <div className='absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02)_0%,rgba(255,255,255,0)_28%)]' />
+        <div className='absolute inset-0 bg-[radial-gradient(112%_84%_at_50%_-8%,rgba(208,6,0,0.14)_0%,transparent_58%)]' />
+        <div className='absolute inset-0 bg-[radial-gradient(88%_70%_at_100%_90%,rgba(208,6,0,0.08)_0%,transparent_64%)]' />
       </div>
 
-      <div className='relative z-10 mx-auto max-w-lg flex flex-col gap-7'>
+      <div className='relative z-10 mx-auto max-w-lg px-4 flex flex-col gap-7'>
         <section>
           <div className='h-11 rounded-2xl border border-white/10 bg-white/5 px-4 flex items-center gap-2'>
             <Search size={16} className='text-neutral-500' />
@@ -232,6 +240,25 @@ export default function HomeMobile() {
         <p className='text-[10px] text-neutral-500 text-center'>
           Hải Thích Đi • Trekking, Kết nối, Thiện nguyện
         </p>
+      </div>
+
+      <div className='relative z-10 mt-10'>
+        <HomeAboutJourneySection />
+        <LeadersShowcaseSection
+          id='leaders'
+          eyebrow='Đội ngũ dẫn đoàn'
+          title='Leaders - Trái tim của mỗi hành trình'
+          description='Không chỉ dẫn đường, leaders của Hải Thích Đi là những người giữ nhịp đoàn, truyền năng lượng và đảm bảo an toàn trên từng chặng trek.'
+          helperText='Mở profile để xem thế mạnh của từng leader'
+          className='bg-gradient-to-b from-[#0f0f0f] via-[#121212] to-[#171717]'
+        />
+        <HomeFeaturedRoutesSection />
+        <MomentsGallerySection
+          eyebrow='Khoảnh khắc đáng nhớ'
+          title='Khoảnh khắc đáng nhớ'
+          description='Giữ lại những khoảnh khắc thật nhất trên đường trek, từ bình minh trên đỉnh đến nụ cười cuối ngày.'
+          className='bg-gradient-to-b from-[#101010] via-[#131313] to-[#181818]'
+        />
       </div>
     </main>
   );

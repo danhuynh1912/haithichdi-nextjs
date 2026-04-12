@@ -155,7 +155,7 @@ export function LeadersShowcaseSection({
       <section
         id={id}
         className={cn(
-          'relative min-h-screen bg-[#0b0b0b] border-t border-white/5 py-16 sm:py-20 lg:py-24 scroll-mt-28',
+          'relative md:min-h-screen bg-[#121212] border-t border-white/5 py-14 sm:py-16 lg:py-24 scroll-mt-28',
           className,
         )}
       >
@@ -164,10 +164,10 @@ export function LeadersShowcaseSection({
           <div className='flex flex-col md:flex-row md:items-end md:justify-between gap-6'>
             <div>
               <p className='text-xs uppercase tracking-[0.25em] text-red-200'>{eyebrow}</p>
-              <h2 className='text-3xl sm:text-4xl font-black mt-2'>{title}</h2>
+              <h2 className='text-2xl sm:text-3xl lg:text-4xl font-black mt-2'>{title}</h2>
               <p className='text-neutral-300 mt-3 max-w-2xl'>{description}</p>
             </div>
-            <div className='inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-neutral-200'>
+            <div className='inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 sm:px-4 py-2 text-xs sm:text-sm text-neutral-200'>
               <Heart className='w-4 h-4 text-red-400' />
               <span>{helperText}</span>
             </div>
@@ -189,7 +189,7 @@ export function LeadersShowcaseSection({
                       setSelectedLeader(leader);
                     }
                   }}
-                  className='group text-left rounded-3xl border border-white/10 bg-gradient-to-br from-white/5 via-black/20 to-black/60 p-5 md:cursor-pointer hover:border-red-400/50 hover:shadow-[0_20px_60px_-35px_rgba(255,80,80,0.6)] transition-all duration-300'
+                  className='group text-left rounded-3xl border border-white/10 bg-gradient-to-br from-white/8 via-black/12 to-black/45 p-5 md:cursor-pointer hover:border-red-400/50 hover:shadow-[0_20px_60px_-35px_rgba(255,80,80,0.6)] transition-all duration-300'
                   initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -266,7 +266,7 @@ export function MomentsGallerySection({
     <section
       id={id}
       className={cn(
-        'relative min-h-screen bg-gradient-to-b from-[#0b0b0b] via-black to-[#050505] border-t border-white/5 py-16 sm:py-20 lg:py-24 scroll-mt-28',
+        'relative md:min-h-screen bg-gradient-to-b from-[#121212] via-[#141414] to-[#1a1a1a] border-t border-white/5 py-14 sm:py-16 lg:py-24 scroll-mt-28',
         className,
       )}
     >
@@ -275,7 +275,7 @@ export function MomentsGallerySection({
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div>
             <p className='text-xs uppercase tracking-[0.25em] text-red-200'>{eyebrow}</p>
-            <h2 className='text-3xl sm:text-4xl font-black mt-2'>{title}</h2>
+            <h2 className='text-2xl sm:text-3xl lg:text-4xl font-black mt-2'>{title}</h2>
             <p className='text-neutral-300 mt-3 max-w-2xl'>{description}</p>
           </div>
           <div className='inline-flex items-center gap-2 text-xs text-neutral-300 bg-white/5 border border-white/10 px-3 py-2 rounded-full'>
