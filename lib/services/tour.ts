@@ -11,6 +11,26 @@ export interface TourDetail {
   image_url: string | null;
   slots_left: number;
   booked_count: number;
+  price: string | null;
+  description_md: string;
+  summary: string;
+  itinerary_md: string;
+  images: TourImageItem[];
+  itinerary_days: TourItineraryDay[];
+}
+
+export interface TourImageItem {
+  id: number;
+  image_url: string | null;
+  caption: string;
+  sort_order: number;
+}
+
+export interface TourItineraryDay {
+  day_number: number;
+  date: string | null;
+  title: string;
+  content_md: string;
 }
 
 export interface BookingPayload {
@@ -57,6 +77,10 @@ export const tourService = {
   },
   getHotTours: async () => {
     const response = await api.get<TourDetail[]>('/api/tours/hot/');
+    return response.data;
+  },
+  getRelatedTours: async (tourId: number, limit = 12) => {
+    const response = await api.get<TourListItem[]>(`/api/tours/${tourId}/related/?limit=${limit}`);
     return response.data;
   },
   createBooking: async (payload: BookingPayload) => {

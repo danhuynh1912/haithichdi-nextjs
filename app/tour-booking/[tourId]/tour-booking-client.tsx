@@ -2,26 +2,37 @@
 
 import { memo, useActionState, useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { tourService, TourDetail, BookingPayload } from '@/lib/services/tour';
-import { saveBookingId } from '@/lib/services/booking-storage';
 import { isAxiosError } from 'axios';
-import { formatDateDdMm } from '@/lib/utils';
+import { useQuery } from '@tanstack/react-query';
 import {
+  AlertTriangle,
   Calendar,
+  ChevronLeft,
+  Clock3,
+  LoaderCircle,
+  Mail,
   MapPin,
   Phone,
-  Mail,
   User,
-  AlertTriangle,
-  ChevronLeft,
-  LoaderCircle,
+  WalletCards,
 } from 'lucide-react';
 import { useFormStatus } from 'react-dom';
-import { useQuery } from '@tanstack/react-query';
-import { BookingFlowHeader } from '../components/booking-flow-header';
+
 import BackgroundBlur from '@/app/locations/components/background-blur';
-import PdfPreviewCard from '@/components/pdf-preview-card';
-import { useIsMobile } from '@/lib/hooks/use-is-mobile';
+import type { TourListItem } from '@/app/tours/types';
+import { tourService, type BookingPayload, type TourDetail } from '@/lib/services/tour';
+import { saveBookingId } from '@/lib/services/booking-storage';
+import { formatDateDdMm } from '@/lib/utils';
+import { BookingFlowHeader } from '../components/booking-flow-header';
+import { ItineraryAccordion } from './components/itinerary-accordion';
+import { MarkdownArticle } from './components/markdown-article';
+import { RelatedToursCarousel } from './components/related-tours-carousel';
+import { TourImageCollage } from './components/tour-image-collage';
+import {
+  formatTourPriceVnd,
+  getDurationDays,
+  normalizeItineraryDays,
+} from './booking-view-model';
 
 type BookingFormState =
   | { status: 'idle'; message?: string; redirectTo?: undefined; bookingId?: undefined }
@@ -36,7 +47,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type='submit'
       disabled={pending}
-      className='w-full py-4 rounded-2xl font-extrabold uppercase tracking-[0.18em] text-sm bg-white text-black hover:bg-[#d00600] hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
+      className='w-full py-3.5 rounded-2xl font-bold uppercase tracking-[0.12em] text-sm bg-white text-black hover:bg-[#d00600] hover:text-white active:bg-[#a80500] transition-colors disabled:opacity-60 disabled:cursor-not-allowed'
     >
       {pending ? 'Đang gửi...' : label}
     </button>
@@ -49,7 +60,6 @@ export default function TourBookingClient({
   tourIdParam: string;
 }) {
   const router = useRouter();
-  const isMobile = useIsMobile();
   const tourId = Number(tourIdParam);
 
   const {
@@ -60,9 +70,15 @@ export default function TourBookingClient({
     queryKey: ['tour-detail', tourId],
     queryFn: () => tourService.getTourDetail(tourId),
     enabled: Number.isFinite(tourId),
+    staleTime: 30_000,
   });
 
-  const pdfUrl = tour?.location?.quotation_file_url || null;
+  const { data: relatedTours = [] } = useQuery<TourListItem[], Error>({
+    queryKey: ['tour-related', tourId],
+    queryFn: () => tourService.getRelatedTours(tourId, 12),
+    enabled: Number.isFinite(tourId),
+    staleTime: 60_000,
+  });
 
   if (isPending) {
     return (
@@ -81,7 +97,7 @@ export default function TourBookingClient({
         </p>
         <button
           onClick={() => router.back()}
-          className='px-4 py-2 rounded-full border border-white/20 text-sm hover:border-white transition-colors flex items-center gap-2'
+          className='px-4 py-2 rounded-full border border-white/20 text-sm hover:border-white transition-colors flex items-center gap-2 active:bg-white/5'
         >
           <ChevronLeft size={16} />
           Quay lại
@@ -90,63 +106,101 @@ export default function TourBookingClient({
     );
   }
 
+  const durationDays = getDurationDays(tour.start_date, tour.end_date);
+  const itineraryDays = normalizeItineraryDays(tour);
+  const formattedPrice = formatTourPriceVnd(tour.price);
+  const toursYouMayLike = relatedTours.filter((item) => item.id !== tour.id);
+
   return (
     <main className='min-h-screen text-white flex flex-col pt-24 px-4 md:px-8'>
       <BackgroundBlur imageUrl={tour.location.full_image_url} />
-      <div className='w-full max-w-[1600px] mx-auto pb-10 flex flex-col gap-8'>
-        <header className='flex flex-col gap-2'>
+
+      <div className='w-full max-w-[1600px] mx-auto pb-12 flex flex-col gap-8 md:gap-10'>
+        <header className='flex flex-col gap-3'>
           <BookingFlowHeader trail={[`Booking tour ${tour.location.name}`]} />
 
-          <h1 className='text-2xl md:text-4xl font-black uppercase tracking-tight'>
-            {tour.title}
-          </h1>
-          <div className='flex flex-wrap items-center gap-4 text-neutral-400 text-sm'>
-            <span className='flex items-center gap-2'>
-              <MapPin className='text-[#d00600]' size={16} />
-              {tour.location.name}
-            </span>
-            {tour.start_date && (
-              <span className='flex items-center gap-2'>
-                <Calendar className='text-[#d00600]' size={16} />
-                {formatDateDdMm(tour.start_date)}
-                {tour.end_date ? ` - ${formatDateDdMm(tour.end_date)}` : ''}
-              </span>
-            )}
-            <span className='flex items-center gap-2'>
-              <UsersIcon />
-              Còn {tour.slots_left} chỗ
-            </span>
+          <div className='flex flex-col gap-2'>
+            <h1 className='text-2xl md:text-4xl font-black uppercase tracking-tight'>
+              {tour.title}
+            </h1>
+            <p className='text-sm md:text-base text-neutral-300 max-w-4xl'>
+              {tour.summary?.trim() || 'Hành trình chinh phục cung đường trekking đầy thử thách và đáng nhớ.'}
+            </p>
           </div>
         </header>
 
-        {isMobile ? (
-          <div className='w-full rounded-3xl border border-white/10 bg-neutral-900 overflow-hidden shadow-2xl'>
-            <PdfPreviewCard
-              pdfUrl={pdfUrl}
-              title={`Quotation - ${tour.location.name}`}
-              className='w-full border-0 rounded-none shadow-none'
-              emptyMessage='Chưa có file quotation cho địa điểm này.'
-              thumbnailUrl={tour.location.full_image_url}
-              mobileCtaLabel='Xem lịch trình và báo giá'
-            />
-            <BookingForm
-              tourId={tourId}
-              locationName={tour.location.name}
-              embeddedMobile
-            />
+        <section className='grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_420px] items-start'>
+          <TourImageCollage title={tour.title} images={tour.images} fallbackImageUrl={tour.location.full_image_url} />
+
+          <div className='lg:sticky lg:top-28'>
+            <BookingForm tourId={tour.id} locationName={tour.location.name} />
           </div>
-        ) : (
-          <div className='flex flex-col md:flex-row gap-6'>
-            <PdfPreviewCard
-              pdfUrl={pdfUrl}
-              title={`Quotation - ${tour.location.name}`}
-              className='w-full md:w-1/2 md:min-h-[60vh]'
-              frameClassName='w-full h-full min-h-[60vh]'
-              emptyMessage='Chưa có file quotation cho địa điểm này.'
-            />
-            <BookingForm tourId={tourId} locationName={tour.location.name} />
+        </section>
+
+        <section className='rounded-3xl border border-white/10 bg-neutral-900/60 p-5 md:p-8 space-y-6'>
+          <div className='flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm text-neutral-300'>
+            {durationDays && (
+              <InfoChip icon={<Clock3 size={14} className='text-[#d00600]' />}>
+                {durationDays} ngày
+              </InfoChip>
+            )}
+            <InfoChip icon={<MapPin size={14} className='text-[#d00600]' />}>
+              {tour.location.name}
+            </InfoChip>
+            {tour.start_date && (
+              <InfoChip icon={<Calendar size={14} className='text-[#d00600]' />}>
+                {formatDateDdMm(tour.start_date)}
+                {tour.end_date ? ` - ${formatDateDdMm(tour.end_date)}` : ''}
+              </InfoChip>
+            )}
+            <InfoChip icon={<UsersIcon />}>
+              Còn {tour.slots_left} chỗ
+            </InfoChip>
           </div>
-        )}
+
+          <div className='flex flex-col md:flex-row md:items-start md:justify-between gap-4'>
+            <div className='space-y-2'>
+              <h2 className='text-2xl md:text-3xl font-black'>Description</h2>
+              <p className='text-xs md:text-sm text-neutral-400'>
+                Thông tin chi tiết hành trình ở dạng markdown.
+              </p>
+            </div>
+
+            <div className='rounded-2xl border border-[#d00600]/40 bg-[#d00600]/10 px-4 py-3 min-w-[210px]'>
+              <p className='text-[11px] uppercase tracking-[0.12em] text-neutral-300 flex items-center gap-2'>
+                <WalletCards size={14} className='text-[#d00600]' />
+                Giá tour
+              </p>
+              <p className='text-xl md:text-2xl font-black text-white mt-1'>
+                {formattedPrice}
+              </p>
+            </div>
+          </div>
+
+          <MarkdownArticle markdown={tour.description_md || tour.summary || ''} />
+        </section>
+
+        <section className='space-y-4'>
+          <div className='flex items-end justify-between gap-3'>
+            <div className='space-y-1'>
+              <h2 className='text-2xl md:text-3xl font-black'>Itinerary</h2>
+              <p className='text-xs md:text-sm text-neutral-400'>
+                Mặc định mở Day 0, bấm vào tiêu đề để xem chi tiết từng ngày.
+              </p>
+            </div>
+          </div>
+          <ItineraryAccordion days={itineraryDays} />
+        </section>
+
+        <section className='space-y-4'>
+          <div className='space-y-1'>
+            <h2 className='text-2xl md:text-3xl font-black'>Các tours bạn có thể thích</h2>
+            <p className='text-xs md:text-sm text-neutral-400'>
+              Gợi ý thêm các hành trình đang mở đăng ký.
+            </p>
+          </div>
+          <RelatedToursCarousel tours={toursYouMayLike} />
+        </section>
       </div>
     </main>
   );
@@ -155,11 +209,9 @@ export default function TourBookingClient({
 const BookingForm = memo(function BookingForm({
   tourId,
   locationName,
-  embeddedMobile = false,
 }: {
   tourId: number;
   locationName: string;
-  embeddedMobile?: boolean;
 }) {
   const router = useRouter();
   const [formState, formAction] = useActionState<BookingFormState, FormData>(
@@ -224,13 +276,7 @@ const BookingForm = memo(function BookingForm({
   }, [formState, router]);
 
   return (
-    <div
-      className={`w-full flex flex-col gap-6 ${
-        embeddedMobile
-          ? 'bg-transparent border-0 rounded-none shadow-none p-5'
-          : 'md:w-1/2 bg-neutral-900 border border-white/10 rounded-3xl shadow-2xl p-5 md:p-8'
-      }`}
-    >
+    <div className='w-full bg-neutral-900 border border-white/10 rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.55)] p-5 md:p-6 flex flex-col gap-6'>
       <div className='flex flex-col gap-1'>
         <h2 className='text-2xl font-black text-white'>Đăng ký ngay</h2>
         <p className='text-neutral-400 text-sm'>
@@ -239,7 +285,7 @@ const BookingForm = memo(function BookingForm({
       </div>
 
       {formState.status === 'success' && (
-        <div className='flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#d00600]/15 border border-[#d00600]/40 text-[#d00600] text-sm'>
+        <div className='flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#d00600]/15 border border-[#d00600]/40 text-[#ff847f] text-sm'>
           <LoaderCircle size={18} className='animate-spin' />
           <span>{formState.message}</span>
         </div>
@@ -253,6 +299,7 @@ const BookingForm = memo(function BookingForm({
 
       <form action={formAction} className='flex flex-col gap-4'>
         <input type='hidden' name='tour' value={tourId} />
+
         <Field
           name='full_name'
           label='Họ và tên'
@@ -348,11 +395,20 @@ function Field({
   );
 }
 
+function InfoChip({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+  return (
+    <span className='inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5'>
+      {icon}
+      <span>{children}</span>
+    </span>
+  );
+}
+
 function UsersIcon() {
   return (
     <svg
-      width='18'
-      height='18'
+      width='14'
+      height='14'
       viewBox='0 0 24 24'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
