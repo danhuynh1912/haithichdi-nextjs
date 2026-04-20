@@ -129,55 +129,57 @@ export default function TourBookingClient({
           </div>
         </header>
 
-        <section className='grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_420px] items-start'>
+        <section className='w-full'>
           <TourImageCollage title={tour.title} images={tour.images} fallbackImageUrl={tour.location.full_image_url} />
+        </section>
+
+        <section className='grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_420px] items-start'>
+          <div className='rounded-3xl border border-white/10 bg-neutral-900/60 p-5 md:p-8 space-y-6'>
+            <div className='flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm text-neutral-300'>
+              {durationDays && (
+                <InfoChip icon={<Clock3 size={14} className='text-[#d00600]' />}>
+                  {durationDays} ngày
+                </InfoChip>
+              )}
+              <InfoChip icon={<MapPin size={14} className='text-[#d00600]' />}>
+                {tour.location.name}
+              </InfoChip>
+              {tour.start_date && (
+                <InfoChip icon={<Calendar size={14} className='text-[#d00600]' />}>
+                  {formatDateDdMm(tour.start_date)}
+                  {tour.end_date ? ` - ${formatDateDdMm(tour.end_date)}` : ''}
+                </InfoChip>
+              )}
+              <InfoChip icon={<UsersIcon />}>
+                Còn {tour.slots_left} chỗ
+              </InfoChip>
+            </div>
+
+            <div className='flex flex-col md:flex-row md:items-start md:justify-between gap-4'>
+              <div className='space-y-2'>
+                <h2 className='text-2xl md:text-3xl font-black'>Description</h2>
+                <p className='text-xs md:text-sm text-neutral-400'>
+                  Thông tin chi tiết hành trình ở dạng markdown.
+                </p>
+              </div>
+
+              <div className='rounded-2xl border border-[#d00600]/40 bg-[#d00600]/10 px-4 py-3 min-w-[210px]'>
+                <p className='text-[11px] uppercase tracking-[0.12em] text-neutral-300 flex items-center gap-2'>
+                  <WalletCards size={14} className='text-[#d00600]' />
+                  Giá tour
+                </p>
+                <p className='text-xl md:text-2xl font-black text-white mt-1'>
+                  {formattedPrice}
+                </p>
+              </div>
+            </div>
+
+            <MarkdownArticle markdown={tour.description_md || tour.summary || ''} />
+          </div>
 
           <div className='lg:sticky lg:top-28'>
             <BookingForm tourId={tour.id} locationName={tour.location.name} />
           </div>
-        </section>
-
-        <section className='rounded-3xl border border-white/10 bg-neutral-900/60 p-5 md:p-8 space-y-6'>
-          <div className='flex flex-wrap gap-2 md:gap-3 text-xs md:text-sm text-neutral-300'>
-            {durationDays && (
-              <InfoChip icon={<Clock3 size={14} className='text-[#d00600]' />}>
-                {durationDays} ngày
-              </InfoChip>
-            )}
-            <InfoChip icon={<MapPin size={14} className='text-[#d00600]' />}>
-              {tour.location.name}
-            </InfoChip>
-            {tour.start_date && (
-              <InfoChip icon={<Calendar size={14} className='text-[#d00600]' />}>
-                {formatDateDdMm(tour.start_date)}
-                {tour.end_date ? ` - ${formatDateDdMm(tour.end_date)}` : ''}
-              </InfoChip>
-            )}
-            <InfoChip icon={<UsersIcon />}>
-              Còn {tour.slots_left} chỗ
-            </InfoChip>
-          </div>
-
-          <div className='flex flex-col md:flex-row md:items-start md:justify-between gap-4'>
-            <div className='space-y-2'>
-              <h2 className='text-2xl md:text-3xl font-black'>Description</h2>
-              <p className='text-xs md:text-sm text-neutral-400'>
-                Thông tin chi tiết hành trình ở dạng markdown.
-              </p>
-            </div>
-
-            <div className='rounded-2xl border border-[#d00600]/40 bg-[#d00600]/10 px-4 py-3 min-w-[210px]'>
-              <p className='text-[11px] uppercase tracking-[0.12em] text-neutral-300 flex items-center gap-2'>
-                <WalletCards size={14} className='text-[#d00600]' />
-                Giá tour
-              </p>
-              <p className='text-xl md:text-2xl font-black text-white mt-1'>
-                {formattedPrice}
-              </p>
-            </div>
-          </div>
-
-          <MarkdownArticle markdown={tour.description_md || tour.summary || ''} />
         </section>
 
         <section className='space-y-4'>
