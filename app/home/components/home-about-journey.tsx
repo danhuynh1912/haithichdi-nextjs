@@ -373,7 +373,7 @@ export function HomeFeaturedRoutesSection() {
         ) : mainRoute ? (
           <>
             <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
-              <article className='group relative overflow-hidden rounded-[32px] border border-white/10'>
+              <article className='group max-h-[600px] h-[600px] relative overflow-hidden rounded-[32px] border border-white/10'>
                 <Image
                   src={mainRoute.image_url || '/images/haithichdi1.jpg'}
                   alt={mainRoute.display_name}
@@ -408,10 +408,11 @@ export function HomeFeaturedRoutesSection() {
                 </div>
               </article>
 
-              <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
+              <div className='grid gap-4 sm:grid-cols-2 lg:h-[600px] lg:grid-cols-1 lg:grid-rows-3'>
                 {sideRoutes.map((route, index) => (
                   <motion.div
                     key={route.id}
+                    className='h-full'
                     initial={{ opacity: 0, y: 16 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
@@ -419,14 +420,14 @@ export function HomeFeaturedRoutesSection() {
                   >
                     <Link
                       href={`/tours?mode=location&name=${slugify(route.name)}`}
-                      className='group relative block overflow-hidden rounded-3xl border border-white/10'
+                      className='group relative block h-40 overflow-hidden rounded-3xl border border-white/10 sm:h-52 lg:h-full'
                     >
                       <Image
                         src={route.image_url || '/images/tachinhu1.jpg'}
                         alt={route.display_name}
                         width={1200}
                         height={780}
-                        className='h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105'
+                        className='h-full w-full object-cover transition-transform duration-500 group-hover:scale-105'
                         unoptimized={Boolean(route.image_url?.startsWith('http'))}
                       />
                       <div className='absolute inset-0 bg-gradient-to-t from-black/72 to-black/15' />
