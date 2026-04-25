@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import { type ComponentType } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   ArrowRight,
   Compass,
@@ -15,7 +16,12 @@ import {
   Stars,
 } from 'lucide-react';
 import { ANIMATION_EASE } from '@/lib/constants';
+import { homeService } from '@/lib/services/home';
 import { cn, slugify } from '@/lib/utils';
+import {
+  buildHomeFeaturedRoutesViewModel,
+  formatSuitableAudiences,
+} from './home-featured-routes-view-model';
 
 type KeywordCard = {
   title: string;
@@ -126,29 +132,6 @@ const valueSections: ValueSection[] = [
     difficulty: 'Du lịch bền vững',
   },
 ];
-
-const representativeRoutes = [
-  {
-    title: 'Phu Sa Phìn',
-    subtitle: 'Cung hot nhất hiện tại',
-    image:
-      'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    title: 'Rừng rêu Samu',
-    subtitle: 'Lạc vào thế giới cổ tích',
-    image:
-      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',
-  },
-  {
-    title: 'Tà Chì Nhù',
-    subtitle: 'Thiên đường biển mây',
-    image:
-      'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=80',
-  },
-];
-
-const advancedRoutes = ['Nhìu Cồ San', 'Ky Quan San', 'Lùng Cúng', 'Tà Chì Nhù', 'Putaleng'];
 
 const sectionRevealInitial = {
   opacity: 0,
@@ -352,6 +335,18 @@ export function HomeAboutJourneySection() {
 }
 
 export function HomeFeaturedRoutesSection() {
+  const { data, isPending, isError } = useQuery({
+    queryKey: ['home-featured-routes'],
+    queryFn: homeService.getFeaturedRoutes,
+    staleTime: 60_000,
+  });
+  const { mainRoute, sideRoutes, highlightAudience } =
+    buildHomeFeaturedRoutesViewModel(data);
+
+  const mainRouteAudienceLabel = mainRoute
+    ? formatSuitableAudiences(mainRoute.suitable_audiences)
+    : '';
+
   return (
     <section className='relative border-t border-white/5 bg-gradient-to-b from-[#101010] via-[#131313] to-[#191919] py-14 sm:py-16 lg:py-20'>
       <div className='pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.012)_0%,rgba(255,255,255,0)_28%)]' />
@@ -373,84 +368,144 @@ export function HomeFeaturedRoutesSection() {
           </h2>
         </div>
 
-        <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
-          <article className='group relative overflow-hidden rounded-[32px] border border-white/10'>
-              <Image
-                src='/images/haithichdi1.jpg'
-                alt='Tà Xùa - Sống lưng khủng long'
-                width={1600}
-                height={1200}
-                className='h-full min-h-[300px] sm:min-h-[360px] lg:min-h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
-              />
-            <div className='absolute inset-0 bg-gradient-to-t from-black/78 via-black/25 to-transparent' />
-            <div className='absolute inset-x-0 bottom-0 p-7'>
-              <p className='text-xs uppercase tracking-[0.22em] text-red-200'>Main Route</p>
-              <h3 className='mt-2 text-2xl sm:text-3xl font-black'>Tà Xùa – Sống lưng khủng long</h3>
-              <p className='mt-3 max-w-2xl text-sm text-neutral-200'>
-                Một trong những cung trekking đẹp nhất miền Bắc, nổi tiếng với biển mây và những
-                đoạn sống lưng đầy thử thách.
-              </p>
-              <p className='mt-2 text-sm font-semibold text-red-100'>Phù hợp: Người mới + trung cấp.</p>
-              <Link
-                href={`/tours?mode=location&name=${slugify('Ta Xua')}`}
-                className='mt-4 inline-flex items-center gap-2 rounded-full border border-red-400/45 bg-red-500/18 px-5 py-2 text-sm font-semibold text-red-100 hover:bg-red-500/28 transition-colors'
-              >
-                Xem lịch tour Tà Xùa
-                <ArrowRight className='h-4 w-4' />
-              </Link>
+        {isPending ? (
+          <HomeFeaturedRoutesLoadingState />
+        ) : mainRoute ? (
+          <>
+            <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
+              <article className='group relative overflow-hidden rounded-[32px] border border-white/10'>
+                <Image
+                  src={mainRoute.image_url || '/images/haithichdi1.jpg'}
+                  alt={mainRoute.display_name}
+                  width={1600}
+                  height={1200}
+                  className='h-full min-h-[300px] sm:min-h-[360px] lg:min-h-[420px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]'
+                  unoptimized={Boolean(mainRoute.image_url?.startsWith('http'))}
+                />
+                <div className='absolute inset-0 bg-gradient-to-t from-black/78 via-black/25 to-transparent' />
+                <div className='absolute inset-x-0 bottom-0 p-7'>
+                  <p className='text-xs uppercase tracking-[0.22em] text-red-200'>Main Route</p>
+                  <h3 className='mt-2 text-2xl sm:text-3xl font-black'>
+                    {mainRoute.display_name}
+                  </h3>
+                  {mainRoute.summary ? (
+                    <p className='mt-3 max-w-2xl text-sm text-neutral-200'>
+                      {mainRoute.summary}
+                    </p>
+                  ) : null}
+                  {mainRouteAudienceLabel ? (
+                    <p className='mt-2 text-sm font-semibold text-red-100'>
+                      Phù hợp: {mainRouteAudienceLabel}.
+                    </p>
+                  ) : null}
+                  <Link
+                    href={`/tours?mode=location&name=${slugify(mainRoute.name)}`}
+                    className='mt-4 inline-flex items-center gap-2 rounded-full border border-red-400/45 bg-red-500/18 px-5 py-2 text-sm font-semibold text-red-100 hover:bg-red-500/28 transition-colors'
+                  >
+                    {`Xem lịch tour ${mainRoute.name}`}
+                    <ArrowRight className='h-4 w-4' />
+                  </Link>
+                </div>
+              </article>
+
+              <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
+                {sideRoutes.map((route, index) => (
+                  <motion.div
+                    key={route.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45, ease: ANIMATION_EASE, delay: index * 0.06 }}
+                  >
+                    <Link
+                      href={`/tours?mode=location&name=${slugify(route.name)}`}
+                      className='group relative block overflow-hidden rounded-3xl border border-white/10'
+                    >
+                      <Image
+                        src={route.image_url || '/images/tachinhu1.jpg'}
+                        alt={route.display_name}
+                        width={1200}
+                        height={780}
+                        className='h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105'
+                        unoptimized={Boolean(route.image_url?.startsWith('http'))}
+                      />
+                      <div className='absolute inset-0 bg-gradient-to-t from-black/72 to-black/15' />
+                      <div className='absolute inset-x-0 bottom-0 p-4'>
+                        <p className='text-lg font-bold'>{route.display_name}</p>
+                        {route.subtitle ? (
+                          <p className='text-sm text-neutral-200'>{route.subtitle}</p>
+                        ) : null}
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-          </article>
 
-          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
-            {representativeRoutes.map((route, index) => (
-              <motion.div
-                key={route.title}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, ease: ANIMATION_EASE, delay: index * 0.06 }}
-              >
-                <Link
-                  href={`/tours?mode=location&name=${slugify(route.title)}`}
-                  className='group relative block overflow-hidden rounded-3xl border border-white/10'
-                >
-                  <Image
-                    src={route.image}
-                    alt={route.title}
-                    width={1200}
-                    height={780}
-                    className='h-40 w-full object-cover transition-transform duration-500 group-hover:scale-105'
-                    unoptimized
-                  />
-                  <div className='absolute inset-0 bg-gradient-to-t from-black/72 to-black/15' />
-                  <div className='absolute inset-x-0 bottom-0 p-4'>
-                    <p className='text-lg font-bold'>{route.title}</p>
-                    <p className='text-sm text-neutral-200'>{route.subtitle}</p>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-black/32 to-black/55 p-6 backdrop-blur-sm'>
-          <p className='text-sm text-neutral-200'>
-            Hành trình chinh phục đỉnh cao, thử thách thể lực và ý chí rõ ràng nhất.
-          </p>
-          <p className='mt-2 text-sm font-semibold text-red-100'>Phù hợp: Người muốn vượt giới hạn.</p>
-          <div className='mt-5 flex flex-wrap gap-2.5'>
-            {advancedRoutes.map((route) => (
-              <Link
-                key={route}
-                href={`/tours?mode=location&name=${slugify(route)}`}
-                className='rounded-full border border-white/10 bg-black/35 px-4 py-2 text-sm text-neutral-100 transition-colors hover:border-red-400/60 hover:text-white'
-              >
-                {route}
-              </Link>
-            ))}
-          </div>
-        </div>
+            <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.1] via-black/32 to-black/55 p-6 backdrop-blur-sm'>
+              <p className='text-sm text-neutral-200'>
+                {highlightAudience?.description || 'Chưa có mô tả đối tượng phù hợp cho section này.'}
+              </p>
+              <p className='mt-2 text-sm font-semibold text-red-100'>
+                {highlightAudience
+                  ? `Phù hợp: ${highlightAudience.title}.`
+                  : 'Phù hợp: Đang cập nhật.'}
+              </p>
+              <div className='mt-5 flex flex-wrap gap-2.5'>
+                {highlightAudience?.locations.length ? (
+                  highlightAudience.locations.map((route) => (
+                    <Link
+                      key={route.id}
+                      href={`/tours?mode=location&name=${slugify(route.name)}`}
+                      className='rounded-full border border-white/10 bg-black/35 px-4 py-2 text-sm text-neutral-100 transition-colors hover:border-red-400/60 hover:text-white'
+                    >
+                      {route.name}
+                    </Link>
+                  ))
+                ) : (
+                  <span className='text-sm text-neutral-400'>
+                    Chưa có route nào cho nhóm đối tượng này.
+                  </span>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <HomeFeaturedRoutesEmptyState isError={isError} />
+        )}
       </motion.div>
     </section>
+  );
+}
+
+function HomeFeaturedRoutesLoadingState() {
+  return (
+    <>
+      <div className='grid gap-6 lg:grid-cols-[1.05fr_0.95fr]'>
+        <div className='min-h-[300px] sm:min-h-[360px] lg:min-h-[420px] rounded-[32px] border border-white/10 bg-white/[0.04] animate-pulse' />
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={`home-featured-route-skeleton-${index}`}
+              className='h-40 rounded-3xl border border-white/10 bg-white/[0.04] animate-pulse'
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className='h-48 rounded-[30px] border border-white/10 bg-white/[0.04] animate-pulse' />
+    </>
+  );
+}
+
+function HomeFeaturedRoutesEmptyState({ isError }: { isError: boolean }) {
+  return (
+    <div className='rounded-[30px] border border-white/10 bg-gradient-to-br from-white/[0.06] via-black/28 to-black/45 p-6 backdrop-blur-sm'>
+      <p className='text-sm text-neutral-200'>
+        {isError
+          ? 'Không tải được dữ liệu cung nổi bật. Vui lòng thử lại sau.'
+          : 'Chưa có dữ liệu cung nổi bật để hiển thị trên homepage.'}
+      </p>
+    </div>
   );
 }
