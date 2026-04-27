@@ -36,10 +36,30 @@ export interface HomeFeaturedRoutesResponse {
   highlight_audience: HomeHighlightAudience | null;
 }
 
+export interface HomeMomentsGalleryImage {
+  id: number;
+  image_url: string | null;
+  caption: string;
+  tour_title: string;
+  location_name: string;
+  width: number | null;
+  height: number | null;
+}
+
+export interface HomeMomentsGalleryResponse {
+  images: HomeMomentsGalleryImage[];
+}
+
 export const homeService = {
   getFeaturedRoutes: async () => {
     const response = await api.get<HomeFeaturedRoutesResponse>(
       '/api/home/featured-routes/',
+    );
+    return response.data;
+  },
+  getMomentsGallery: async () => {
+    const response = await api.get<HomeMomentsGalleryResponse>(
+      '/api/home/moments-gallery/',
     );
     return response.data;
   },

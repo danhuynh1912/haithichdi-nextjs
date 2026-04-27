@@ -25,4 +25,15 @@ describe('homeService', () => {
     expect(mockedApiGet).toHaveBeenCalledWith('/api/home/featured-routes/');
     expect(response).toEqual({ routes: [], highlight_audience: null });
   });
+
+  it('loads the moments gallery for the home section from the dedicated endpoint', async () => {
+    mockedApiGet.mockResolvedValueOnce({
+      data: { images: [] },
+    });
+
+    const response = await homeService.getMomentsGallery();
+
+    expect(mockedApiGet).toHaveBeenCalledWith('/api/home/moments-gallery/');
+    expect(response).toEqual({ images: [] });
+  });
 });

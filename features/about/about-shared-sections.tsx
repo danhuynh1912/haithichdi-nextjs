@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { leaderService, type Leader } from '@/lib/services/leader';
+import { homeService, type HomeMomentsGalleryImage } from '@/lib/services/home';
 import { ANIMATION_EASE } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import FullscreenModalShell from '@/components/fullscreen-modal-shell';
@@ -94,35 +95,6 @@ const fallbackLeaders: LeaderCard[] = [
     strengths: ['Giao tiếp bản địa', 'Ẩm thực địa phương', 'Gắn kết đội'],
     highlight: 'Kết nối với cộng đồng địa phương và đem đến trải nghiệm văn hóa.',
     bio: 'Luôn mỉm cười, luôn lắng nghe; người khiến mọi cuộc trò chuyện quanh lửa trại trở nên đáng nhớ.',
-  },
-];
-
-const galleryImages = [
-  { src: '/images/tachinhu1.jpg', alt: 'Tà Chì Nhù biển mây', width: 1600, height: 2000 },
-  { src: '/images/haithichdi1.jpg', alt: 'Hải Thích Đi hành trình', width: 1600, height: 900 },
-  {
-    src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80',
-    alt: 'Đỉnh núi rực hoàng hôn',
-    width: 900,
-    height: 1200,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80',
-    alt: 'Cắm trại trong rừng',
-    width: 900,
-    height: 1100,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80',
-    alt: 'Hồ trên mây',
-    width: 900,
-    height: 1100,
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=900&q=80&sat=-20',
-    alt: 'Sườn núi đêm',
-    width: 900,
-    height: 1100,
   },
 ];
 
@@ -262,6 +234,14 @@ export function MomentsGallerySection({
   title = 'Những khung hình yêu thích',
   description = 'Chọn layout so le như Pinterest để giữ nhịp tự do, cảm giác phiêu lưu đúng chất trekking.',
 }: MomentsGallerySectionProps) {
+  const { data, isPending, isError } = useQuery({
+    queryKey: ['home', 'moments-gallery'],
+    queryFn: homeService.getMomentsGallery,
+    staleTime: 60_000,
+  });
+
+  const galleryImages = data?.images ?? [];
+
   return (
     <section
       id={id}
@@ -284,33 +264,70 @@ export function MomentsGallerySection({
           </div>
         </div>
 
-        <div className='columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:_balance]'>
-          {galleryImages.map((img, idx) => (
-            <motion.div
-              key={idx}
-              className='mb-4 break-inside-avoid overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_-35px_rgba(0,0,0,0.7)]'
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease: ANIMATION_EASE, delay: idx * 0.03 }}
-            >
-              <Image
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                className='w-full h-auto object-cover'
-              />
-              <div className='p-3 text-sm text-neutral-200 flex items-center justify-between'>
-                <span>{img.alt}</span>
-                <MapPin className='w-4 h-4 text-red-300' />
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        {isPending ? (
+          <MomentsGalleryLoadingState />
+        ) : galleryImages.length ? (
+          <div className='columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:_balance]'>
+            {galleryImages.map((img, idx) => (
+              <motion.div
+                key={img.id}
+                className='mb-4 break-inside-avoid overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-[0_20px_60px_-35px_rgba(0,0,0,0.7)]'
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease: ANIMATION_EASE, delay: idx * 0.03 }}
+              >
+                <Image
+                  src={img.image_url || '/images/haithichdi1.jpg'}
+                  alt={getMomentAltText(img)}
+                  width={img.width || 900}
+                  height={img.height || 1200}
+                  className='w-full h-auto object-cover'
+                  unoptimized={Boolean(img.image_url?.startsWith('http'))}
+                />
+                <div className='p-3 text-sm text-neutral-200 flex items-center justify-between gap-3'>
+                  <span className='min-w-0 truncate'>{getMomentLabel(img)}</span>
+                  <MapPin className='w-4 h-4 shrink-0 text-red-300' />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        ) : (
+          <div className='rounded-3xl border border-white/10 bg-white/5 px-4 py-6 text-sm text-neutral-400'>
+            {isError
+              ? 'Không tải được gallery khoảnh khắc. Vui lòng thử lại sau.'
+              : 'Chưa có ảnh tour nào để hiển thị trong gallery.'}
+          </div>
+        )}
       </div>
     </section>
   );
+}
+
+function MomentsGalleryLoadingState() {
+  return (
+    <div className='columns-1 sm:columns-2 lg:columns-3 gap-4 [column-fill:_balance]'>
+      {['h-[420px]', 'h-[280px]', 'h-[520px]', 'h-[360px]', 'h-[460px]', 'h-[320px]'].map(
+        (heightClassName, index) => (
+          <div
+            key={`moments-gallery-skeleton-${index}`}
+            className={cn(
+              'mb-4 break-inside-avoid rounded-3xl border border-white/10 bg-white/[0.04] animate-pulse',
+              heightClassName,
+            )}
+          />
+        ),
+      )}
+    </div>
+  );
+}
+
+function getMomentAltText(image: HomeMomentsGalleryImage) {
+  return image.caption.trim() || image.tour_title.trim() || image.location_name.trim();
+}
+
+function getMomentLabel(image: HomeMomentsGalleryImage) {
+  return image.caption.trim() || image.tour_title.trim() || image.location_name.trim();
 }
 
 function LeaderModal({
