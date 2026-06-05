@@ -5,6 +5,7 @@ import { createRootMetadata } from '@/lib/seo';
 import SiteHeader from '@/components/site-header';
 import MobileBottomBar from '@/features/mobile/mobile-bottom-bar';
 import SiteFooter from '@/components/site-footer';
+import ChatWidget from '@/components/agent/chat-widget';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin', 'vietnamese'],
@@ -30,6 +31,7 @@ export default function RootLayout({
             <SiteFooter />
           </div>
           <MobileBottomBar />
+          <ChatWidget />
         </Providers>
       </body>
     </html>
